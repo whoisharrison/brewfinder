@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS beerfavorite;
+DROP TABLE IF EXISTS beerimage ;
+DROP TABLE IF EXISTS breweryimage;
+DROP TABLE IF EXISTS brewery;
+DROP TABLE IF EXISTS profile;
