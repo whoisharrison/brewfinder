@@ -1,13 +1,20 @@
 DROP TABLE IF EXISTS beerFavorite;
 DROP TABLE IF EXISTS beerImage ;
 DROP TABLE IF EXISTS breweryImage;
-DROP TABLE IF EXISTS brewery;
 DROP TABLE IF EXISTS tag;
-DROP TABLE IF EXISTS image;
 DROP TABLE IF EXISTS beer;
+DROP TABLE IF EXISTS brewery;
 DROP TABLE IF EXISTS profile;
+DROP TABLE IF EXISTS image;
 
 -- type is style
+
+CREATE TABLE image (
+	imageId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	imageCloudinaryId VARCHAR(32),
+	PRIMARY KEY(imageId)
+
+);
 
 CREATE TABLE profile (
 	profileId INT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -30,11 +37,10 @@ CREATE TABLE profile (
 
 CREATE TABLE beer (
 
-);
-
-CREATE TABLE image (
 
 );
+
+
 
 CREATE TABLE brewery (
 
