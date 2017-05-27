@@ -18,6 +18,7 @@ CREATE TABLE profile (
 	profileSalt CHAR(64) NOT NULL,
 	profileName VARCHAR(64) NOT NULL,
 	profileLocation CHAR(32) NOT NULL,
+	profileContent VARCHAR(750),
 	UNIQUE(profileEmail),
 	UNIQUE(profileAtHandle),
 	PRIMARY KEY(profileId)
