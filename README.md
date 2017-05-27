@@ -1,2 +1,1 @@
-# capstone-x
-super secret
+# brewfinder
