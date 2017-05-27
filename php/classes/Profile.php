@@ -80,7 +80,22 @@ class Profile implements \JsonSerializable {
 	/**
 	 * Constructor for this Profile
 	 *
-	 * @param int
+	 * @param int $newProfileId id of the Profile
+	 * @param int $newProfileImageId image id of the Profile
+	 * @param string|null $newProfileActivationToken activation token
+	 * @param string $newProfileAtHandle string containing the profile at handle
+	 * @param string $newProfileContent string containing user profile content data
+	 * @param string $newProfileEmail user email address
+	 * @param string $newProfileHash string containing password hash
+	 * @param float $newProfileLocationX float containing user's declared location (x coordinates)
+	 * @param float $newProfileLocationY float containing user's declare location (y coordinates)
+	 * @param string $newProfileName name of user profile
+	 * @param string $newProfileSalt string containing profile salt
+	 * @throws \InvalidArgumentException if data types are not valid
+	 * @throws \RangeException if data values are out of bounds (e.g., strings too large, negative integers)
+	 * @throws \TypeError if data types violate type hints
+	 * @throws \Exception if some other exception occurs
+	 * @Documentation https://php.net/manual/en/language.oop5.decon.php
 	 **/
 
 
