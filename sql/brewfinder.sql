@@ -80,13 +80,9 @@ CREATE TABLE beer (
 	FOREIGN KEY(beerImageId) REFERENCES image(imageId)
 );
 
-
-
-
-
 CREATE TABLE breweryImage (
 	breweryImageImageId INT UNSIGNED NOT NULL,
-	breweryImageBreweryId INT UNSIGNED,
+	breweryImageBreweryId INT UNSIGNED NOT NULL,
 	INDEX(breweryImageImageId),
 	INDEX(breweryImageBreweryId),
 	FOREIGN KEY(breweryImageImageId) REFERENCES image(imageId),
@@ -95,7 +91,13 @@ CREATE TABLE breweryImage (
 );
 
 CREATE TABLE beerImage (
-
+	beerImageImageId INT UNSIGNED NOT NULL,
+	beerImageBreweryId INT UNSIGNED NOT NULL,
+	INDEX(beerImageImageId),
+	INDEX(beerImageBreweryId),
+	FOREIGN KEY(beerImageImageId) REFERENCES image(imageId),
+	FOREIGN KEY(beerImageBreweryId) REFERENCES beer(beerId),
+	PRIMARY KEY(beerImageImageId, beerImageBreweryId)
 );
 
 CREATE TABLE beerFavorite (
