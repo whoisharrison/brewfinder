@@ -1,5 +1,5 @@
 <?php
-namespace ?\?\?;
+namespace com/michaelharrisonwebdev;
 /**
  *  Trait to Validate mySQL Date/
  *
