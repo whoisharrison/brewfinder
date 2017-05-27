@@ -73,4 +73,46 @@ class Brewery implements \JsonSerializable {
 	 * @var int $breweryZip
 	 */
 	private $breweryZip;
+
+	/**
+	 * Constructor for this Brewery
+	 *
+	 * @param int $newBreweryId
+	 * @param int|null $newBreweryProfileId
+	 * @param string $newBreweryAddress1
+	 * @param string|null $newBreweryAddress2
+	 * @param float $newBreweryLocationX
+	 * @param float $newBreweryLocationY
+	 * @param string $newBreweryCity
+	 * @param string $newBreweryContent
+	 * @param string $newBreweryEmail
+	 * @param string $newBreweryHash
+	 * @param int $newBreweryImageId
+	 * @param string $newBreweryName
+	 * @param string $newBreweryPhone
+	 * @param string $newBrewerySalt
+	 * @param string $newBreweryState
+	 * @param int $newBreweryZip
+	 **/
+	public function __construct(int $newBreweryId, ?int $newBreweryProfileId, string $newBreweryAddress1, ?string $newBreweryAddress2, float $newBreweryLocationX, float $newBreweryLocationY, string $newBreweryCity, string $newBreweryContent, string $newBreweryEmail, string $newBreweryHash, int $newBreweryImageId, string $newBreweryName, string $newBreweryPhone, string $newBrewerySalt, string $newBreweryState, int $newBreweryZip) {
+		try {
+			$this->setBreweryId($newBreweryId);
+			$this->setBreweryProfileId($newBreweryProfileId);
+			$this->setBreweryAddress1($newBreweryAddress1);
+			$this->setBreweryAddress2($newBreweryAddress2);
+			$this->setBreweryLocationX($newBreweryLocationX);
+			$this->setBreweryLocationY($newBreweryLocationY);
+			$this->setBreweryCity($newBreweryCity);
+			$this->setBreweryContent($newBreweryContent);
+			$this->setBrewerySalt($newBrewerySalt);
+			$this->setBreweryState($newBreweryState);
+			$this->setBreweryZip($newBreweryZip);
+		}
+
+		// Determine what exception type was thrown
+		catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			$exceptionType = get_class($exception);
+			throw(new $exceptionType($exception->getMessage(), 0, $exception));
+		}
+	}
 }
