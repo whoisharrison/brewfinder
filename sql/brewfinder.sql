@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS beerFavorite;
+DROP TABLE IF EXISTS breweryFavorite;
 DROP TABLE IF EXISTS beerImage ;
 DROP TABLE IF EXISTS breweryImage;
 DROP TABLE IF EXISTS beer;
@@ -111,4 +112,17 @@ CREATE TABLE beerFavorite (
 	FOREIGN KEY(beerFavoriteProfileId) REFERENCES profile(profileId),
 	FOREIGN KEY(beerFavoriteBeerId) REFERENCES beer(beerId),
 	PRIMARY KEY(beerFavoriteProfileId, beerFavoriteBeerId)
+);
+
+CREATE TABLE breweryFavorite (
+	breweryFavoriteId INT UNSIGNED NOT NULL,
+	breweryFavoriteProfileId INT UNSIGNED NOT NULL,
+	breweryFavoriteBeerId INT UNSIGNED NOT NULL,
+	breweryFavoriteDate DATETIME(6) NOT NULL,
+	breweryFavoriteStyle VARCHAR(32) NOT NULL,
+	INDEX(breweryFavoriteProfileId),
+	INDEX(breweryFavoriteBeerId),
+	FOREIGN KEY(breweryFavoriteProfileId) REFERENCES profile(profileId),
+	FOREIGN KEY(breweryFavoriteBeerId) REFERENCES beer(beerId),
+	PRIMARY KEY(breweryFavoriteProfileId, breweryFavoriteBeerId)
 );
