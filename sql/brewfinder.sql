@@ -23,9 +23,9 @@ CREATE TABLE profile (
 	profileSalt CHAR(64) NOT NULL,
 	UNIQUE(profileEmail),
 	UNIQUE(profileAtHandle),
-	FOREIGN KEY(profileImageId) REFERENCES profile(profileId),
-	PRIMARY KEY(profileId)
-
+	INDEX(profileId),
+	PRIMARY KEY(profileId),
+	FOREIGN KEY(profileImageId) REFERENCES image(imageId)
 );
 
 CREATE TABLE beer (
