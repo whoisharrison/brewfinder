@@ -128,7 +128,7 @@ class Brewery implements \JsonSerializable {
 	 * Mutator method for brewery id.
 	 *
 	 * @param int $newBreweryId
-	 * @throws \RangeException is $newBrewery id is not positive
+	 * @throws \RangeException is $newBreweryId is not positive
 	 * @throws \TypeError if $newBreweryId is not an integer
 	 **/
 	public function setBreweryId(int $newBreweryId): void {
@@ -148,5 +148,34 @@ class Brewery implements \JsonSerializable {
 		$this->breweryId = $newBreweryId;
 	}
 
-	//
+	/**
+	 * Accessor method for brewery profile id.
+	 *
+	 * @return int value of brewery profile id
+	 **/
+	public function getBreweryProfileId(): int {
+	}
+
+	/**
+	 * Mutator method for brewery profile id.
+	 *
+	 * @param int $newBreweryProfileId
+	 * @throws \RangeException is $newBreweryProfiled is not positive
+	 * @throws \TypeError if $newBreweryProfileId is not an integer
+	 **/
+	public function setBreweryProfileId(int $newBreweryProfileId): void {
+
+		// If brewery profile id is null, immediately return it.
+		if($newBreweryProfileId === null) {
+			$this->breweryProfileId = null;
+			return;
+		}
+
+		// Verify the brewery profile id is positive.
+		if($newBreweryProfileId <=0) {
+			throw(new \RangeException("brewery profile id is not positive"));
+		}
+
+		// Convert and store the brewery id.
+		$this->breweryProfileId = $newBreweryProfileId;
 }
