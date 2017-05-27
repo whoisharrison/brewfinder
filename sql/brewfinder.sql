@@ -19,6 +19,7 @@ CREATE TABLE profile (
 	profileName VARCHAR(64) NOT NULL,
 	profileLocation CHAR(32) NOT NULL,
 	profileContent VARCHAR(750),
+	profileImage INT UNSIGNED,
 	UNIQUE(profileEmail),
 	UNIQUE(profileAtHandle),
 	PRIMARY KEY(profileId)
