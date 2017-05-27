@@ -65,16 +65,19 @@ CREATE TABLE brewery (
 	PRIMARY KEY(breweryId),
 	FOREIGN KEY(breweryProfileId) REFERENCES profile(profileId),
 	FOREIGN KEY(breweryImageId) REFERENCES image(imageId)
-
 );
 
 CREATE TABLE beer (
 	beerId INT UNSIGNED NOT NULL,
 	beerBreweryId INT UNSIGNED NOT NULL,
+	beerImageId INT UNSIGNED NOT NULL,
+	beerAvailability VARCHAR(5) NOT NULL,
+	beerContent VARCHAR (500),
 	beerStyle VARCHAR(32) NOT NULL,
-
-
-
+	INDEX(beerId),
+	INDEX(beerImageId),
+	FOREIGN KEY(beerBreweryId) REFERENCES brewery(breweryId),
+	FOREIGN KEY(beerImageId) REFERENCES image(imageId)
 );
 
 
@@ -82,7 +85,13 @@ CREATE TABLE beer (
 
 
 CREATE TABLE breweryImage (
-
+	breweryImageImageId INT UNSIGNED NOT NULL,
+	breweryImageBreweryId INT UNSIGNED,
+	INDEX(breweryImageImageId),
+	INDEX(breweryImageBreweryId),
+	FOREIGN KEY(breweryImageImageId) REFERENCES image(imageId),
+	FOREIGN KEY(breweryImageBreweryId) REFERENCES brewery(breweryImageId),
+	PRIMARY KEY(breweryImageImageId, breweryImageBreweryId)
 );
 
 CREATE TABLE beerImage (
