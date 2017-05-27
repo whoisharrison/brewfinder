@@ -11,19 +11,20 @@ DROP TABLE IF EXISTS profile;
 
 CREATE TABLE profile (
 	profileId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	profileImageId INT UNSIGNED,
 	profileActivationToken CHAR(32),
 	profileAtHandle VARCHAR(32) NOT NULL,
+	profileContent VARCHAR(750),
 	profileEmail VARCHAR(128) NOT NULL,
 	profileHash CHAR(128) NOT NULL,
-	profileSalt CHAR(64) NOT NULL,
-	profileName VARCHAR(64) NOT NULL,
 	profileLocationX DECIMAL(12,9) NOT NULL,
 	profileLocationY DECIMAL(12,9) NOT NULL,
-	profileContent VARCHAR(750),
-	profileImage INT UNSIGNED,
+	profileName VARCHAR(64) NOT NULL,
+	profileSalt CHAR(64) NOT NULL,
 	UNIQUE(profileEmail),
 	UNIQUE(profileAtHandle),
-	PRIMARY KEY(profileId)
+	PRIMARY KEY(profileId),
+	FOREIGN KEY(profileImageId)
 );
 
 CREATE TABLE beer (
