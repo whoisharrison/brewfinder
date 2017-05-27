@@ -178,4 +178,41 @@ class Brewery implements \JsonSerializable {
 
 		// Convert and store the brewery id.
 		$this->breweryProfileId = $newBreweryProfileId;
+
+		/**
+		 * Accessor method for address 1
+		 *
+		 * @return string value for address 1
+		 **/
+		public function getBreweryAddress1(): string {
+		return ($this->breweryAddress1);
+		}
+
+		/**
+		 * Mutator method for address 1
+		 *
+		 * @param string $newBreweryAddress1
+		 * @throws \InvalidArgumentException if $newBreweryAddress1 is not a string or insecure
+		 * @throws \RangeException if $newBreweryAddress1 is > 128 characters
+		 * @throws \TypeError if the $newBreweryAddress1 is not a string
+		 **/
+		public function setBreweryAddress1(string $newBreweryAddress1) : void {
+
+			// Verify address 1 is secure
+			$newBreweryAddress1 = trim($newBreweryAddress1);
+			$newBreweryAddress1 = filter_var($newBreweryAddress1, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+			if(empty($newBreweryAddress1) === true) {
+				throw(new \InvalidArgumentException("brewery address 1 is empty or insecure"));
+			}
+
+			// Verify address 1 will fit in the database/
+			if(strlen($newBreweryAddress1) > 128) {
+				throw(new \RangeException("brewery address is too large"));
+			}
+
+			// Store address 1.
+			$this->breweryAddress1 = $newBreweryAddress1;
+		}
+
+	}
 }
