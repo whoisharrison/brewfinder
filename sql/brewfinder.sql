@@ -1,6 +1,8 @@
+DROP TABLE IF EXISTS beerTag;
+DROP TABLE IF EXISTS breweryTag;
 DROP TABLE IF EXISTS beerFavorite;
 DROP TABLE IF EXISTS breweryFavorite;
-DROP TABLE IF EXISTS beerImage ;
+DROP TABLE IF EXISTS beerImage;
 DROP TABLE IF EXISTS breweryImage;
 DROP TABLE IF EXISTS beer;
 DROP TABLE IF EXISTS brewery;
@@ -106,7 +108,6 @@ CREATE TABLE beerFavorite (
 	beerFavoriteProfileId INT UNSIGNED NOT NULL,
 	beerFavoriteBeerId INT UNSIGNED NOT NULL,
 	beerFavoriteDate DATETIME(6) NOT NULL,
-	beerFavoriteStyle VARCHAR(32) NOT NULL,
 	INDEX(beerFavoriteProfileId),
 	INDEX(beerFavoriteBeerId),
 	FOREIGN KEY(beerFavoriteProfileId) REFERENCES profile(profileId),
@@ -117,12 +118,31 @@ CREATE TABLE beerFavorite (
 CREATE TABLE breweryFavorite (
 	breweryFavoriteId INT UNSIGNED NOT NULL,
 	breweryFavoriteProfileId INT UNSIGNED NOT NULL,
-	breweryFavoriteBeerId INT UNSIGNED NOT NULL,
+	breweryFavoriteBreweryId INT UNSIGNED NOT NULL,
 	breweryFavoriteDate DATETIME(6) NOT NULL,
-	breweryFavoriteStyle VARCHAR(32) NOT NULL,
 	INDEX(breweryFavoriteProfileId),
-	INDEX(breweryFavoriteBeerId),
+	INDEX(breweryFavoriteBreweryId),
 	FOREIGN KEY(breweryFavoriteProfileId) REFERENCES profile(profileId),
-	FOREIGN KEY(breweryFavoriteBeerId) REFERENCES beer(beerId),
-	PRIMARY KEY(breweryFavoriteProfileId, breweryFavoriteBeerId)
+	FOREIGN KEY(breweryFavoriteBreweryId) REFERENCES brewery(breweryId),
+	PRIMARY KEY(breweryFavoriteProfileId, breweryFavoriteBreweryId)
+);
+
+CREATE TABLE beerTag (
+	beerTagBeerId INT UNSIGNED NOT NULL,
+	beerTagTagId INT UNSIGNED NOT NULL,
+	INDEX(beerTagBeerId),
+	INDEX(beerTagTagId),
+	FOREIGN KEY(beerTagBeerId) REFERENCES beer(beerId),
+	FOREIGN KEY(beerTagTagId) REFERENCES tag(tagId),
+	PRIMARY KEY(beerTagBeerId, beerTagTagId)
+);
+
+CREATE TABLE breweryTag (
+	breweryTagBreweryId INT UNSIGNED NOT NULL,
+	breweryTagTagId INT UNSIGNED NOT NULL,
+	INDEX(breweryTagBreweryId),
+	INDEX(breweryTagTagId),
+	FOREIGN KEY(breweryTagBreweryId) REFERENCES brewery(breweryId),
+	FOREIGN KEY(breweryTagTagId) REFERENCES tag(tagId),
+	PRIMARY KEY(breweryTagBreweryId, breweryTagTagId)
 );
