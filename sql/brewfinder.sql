@@ -35,6 +35,33 @@ CREATE TABLE profile (
 	FOREIGN KEY(profileImageId) REFERENCES image(imageId)
 );
 
+CREATE TABLE brewery (
+	breweryId INT UNSIGNED AUTO_INCREMENT NOT NULL,
+	breweryProfileId INT UNSIGNED,
+	breweryActivationToken CHAR(32),
+	breweryAddress1 VARCHAR(128) NOT NULL,
+	breweryAddress2 VARCHAR(128),
+	breweryCity VARCHAR(128) NOT NULL,
+	breweryContent VARCHAR(1500),
+	breweryEmail VARCHAR(128) NOT NULL,
+	breweryHash CHAR(128) NOT NULL,
+	breweryImageId INT UNSIGNED,
+	breweryName VARCHAR(128) NOT NULL,
+	breweryPhone VARCHAR(12) NOT NULL,
+	brewerySalt CHAR(64) NOT NULL,
+	breweryState VARCHAR(2) NOT NULL,
+	breweryZip VARCHAR(10) NOT NULL,
+	UNIQUE(breweryEmail),
+	UNIQUE(breweryId),
+	INDEX(breweryProfileId),
+	INDEX(breweryImageId),
+	PRIMARY KEY(breweryId),
+	FOREIGN KEY(breweryProfileId) REFERENCES profile(profileId),
+	FOREIGN KEY(breweryImageId) REFERENCES image(imageId)
+
+);
+
+
 CREATE TABLE beer (
 
 
@@ -42,9 +69,7 @@ CREATE TABLE beer (
 
 
 
-CREATE TABLE brewery (
 
-);
 
 CREATE TABLE breweryImage (
 
