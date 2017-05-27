@@ -101,5 +101,14 @@ CREATE TABLE beerImage (
 );
 
 CREATE TABLE beerFavorite (
-
+	beerFavoriteId INT UNSIGNED NOT NULL,
+	beerFavoriteProfileId INT UNSIGNED NOT NULL,
+	beerFavoriteBeerId INT UNSIGNED NOT NULL,
+	beerFavoriteDate DATETIME(6) NOT NULL,
+	beerFavoriteStyle VARCHAR(32) NOT NULL,
+	INDEX(beerFavoriteProfileId),
+	INDEX(beerFavoriteBeerId),
+	FOREIGN KEY(beerFavoriteProfileId) REFERENCES profile(profileId),
+	FOREIGN KEY(beerFavoriteBeerId) REFERENCES beer(beerId),
+	PRIMARY KEY(beerFavoriteProfileId, beerFavoriteBeerId)
 );
