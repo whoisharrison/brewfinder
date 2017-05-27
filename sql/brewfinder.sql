@@ -56,6 +56,8 @@ CREATE TABLE brewery (
 	breweryEmail VARCHAR(128) NOT NULL,
 	breweryHash CHAR(128) NOT NULL,
 	breweryImageId INT UNSIGNED,
+	breweryLocationX DECIMAL(12,9),
+	breweryLocationY DECIMAL(12,9),
 	breweryName VARCHAR(128) NOT NULL,
 	breweryPhone VARCHAR(12) NOT NULL,
 	brewerySalt CHAR(64) NOT NULL,
