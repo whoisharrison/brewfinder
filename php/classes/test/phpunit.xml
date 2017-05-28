@@ -1,0 +1,23 @@
+
+<phpunit>
+    <testsuites>
+        <testsuite name="Brew Finder">
+            <!--<file>Image.php</file>-->
+            <!--<file>Tag.php</file>-->
+            <!--<file>Profile.php</file>-->
+            <!--<file>Brewery.php</file>-->
+            <!--<file>Beer.php</file>-->
+            <!--<file>BreweryImage.php</file>-->
+            <!--<file>BeerImage.php</file>-->
+            <!--<file>BeerFavorite.php</file>-->
+            <!--<file>BreweryFavorite.php</file>-->
+            <!--<file>BeerTag.php</file>-->
+            <!--<file>BreweryTag.php</file>-->
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">..</directory>
+        </whitelist>
+    </filter>
+</phpunit>
