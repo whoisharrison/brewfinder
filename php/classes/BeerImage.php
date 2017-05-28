@@ -7,8 +7,7 @@
  * @author Billy Trabaudo (AKA QED)
  **/
 
-class BeerImage implements \JsonSerializable
-{
+class BeerImage implements \JsonSerializable {
 
     /**
      * @var Int $beerImageImageId
@@ -22,8 +21,7 @@ class BeerImage implements \JsonSerializable
     private $beerImageBreweryId;
 
 
-    public function __construct(int $newBeerImageImageId, int $newBeerImageBreweryId)
-    {
+    public function __construct(int $newBeerImageImageId, int $newBeerImageBreweryId) {
         try {
             $this->setBeerImageImageId($newBeerImageImageId);
             $this->setBeerImageBreweryId($newBeerImageBreweryId);
@@ -39,8 +37,7 @@ class BeerImage implements \JsonSerializable
      * accessor method
      * @return int for $beerImageImageId
      */
-    public function getBeerImageImageId(): int
-    {
+    public function getBeerImageImageId(): int {
         return ($this->beerImageImageId);
 
     }
@@ -50,8 +47,7 @@ class BeerImage implements \JsonSerializable
      * @throws \RangeException if beer image image id is not positive
      * @throws \TypeError if beer image image id is not an int
      */
-    public function setBeerImageImageId(int $newBeerImageImageId): void
-    {
+    public function setBeerImageImageId(int $newBeerImageImageId): void {
         //verify that the beer image image id is positive
         if ($newBeerImageImageId <= 0) {
             throw(new \RangeException("beer image image id is not positive"));
@@ -63,15 +59,17 @@ class BeerImage implements \JsonSerializable
 
 
     /**
+     * accessor method
      * @return Int for $beerImageBreweryId
      */
-    public function getBeerImageBreweryId(): int
-    {
+    public function getBeerImageBreweryId(): int {
         return ($this->beerImageBreweryId);
     }
 
     /**
      * @param Int $newBeerImageBreweryId
+     * @throws \RangeException if beer image image id is not positive
+     * @throws \TypeError if beer image brewery id is not an int
      */
     public function setBeerImageBreweryId(int $newBeerImageBreweryId): void
     {
@@ -131,6 +129,12 @@ class BeerImage implements \JsonSerializable
 
     }
 
+    /**
+     * @param PDO $pdo
+     * @param int $beerImageImageId
+     * @return SplFixedArray
+     **/
+
     public static function getBeerImageByBeerImageImageId(\PDO $pdo, int $beerImageImageId): \SplFixedArray
     {
         //make sure beer image image id is positive
@@ -161,6 +165,12 @@ class BeerImage implements \JsonSerializable
         }
         return ($beerImages);
     }
+
+    /**
+     * @param PDO $pdo
+     * @param int $beerImageBreweryId
+     * @return SplFixedArray
+     **/
 
     public static function getBeerImageByBeerImageBreweryId(\PDO $pdo, int $beerImageBreweryId): \SplFixedArray
     {
@@ -194,9 +204,15 @@ class BeerImage implements \JsonSerializable
         return ($beerImages);
     }
 
+    /**
+     * @param PDO $pdo
+     * @param int $beerImageImageId
+     * @param int $beerImageBreweryId
+     * @return BeerImage|null
+     **/
 
-    public static function getBeerImageByBeerImageImageIdAndBeerImageBreweryId(\PDO $pdo, int $beerImageImageId, int $beerImageBreweryId): ?BeerImage
-    {
+
+    public static function getBeerImageByBeerImageImageIdAndBeerImageBreweryId(\PDO $pdo, int $beerImageImageId, int $beerImageBreweryId): ?BeerImage {
 
         if ($beerImageImageId <= 0) {
             throw(new \PDOException("beer image image id must be greater than zero"));
@@ -224,8 +240,11 @@ class BeerImage implements \JsonSerializable
         return ($beerImage);
     }
 
-    public static function getAllBeerImages(\PDO $pdo): \SplFixedArray
-    {
+    /**
+     * @param PDO $pdo
+     * @return SplFixedArray
+     **/
+    public static function getAllBeerImages(\PDO $pdo): \SplFixedArray {
         $query = "SELECT beerImageImageId, beerImageBreweryId FROM beerImage";
         $statement = $pdo->prepare($query);
         $statement->execute();
