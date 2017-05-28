@@ -608,4 +608,42 @@ class Brewery implements \JsonSerializable {
 		$this->brewerySalt = $newBrewerySalt;
 	}
 
+	/**
+	 * Accessor method for brewery state.
+	 *
+	 * @return string representation of the state
+	 */
+	public function getBreweryState(): string {
+		return $this->breweryState;
+	}
+
+	/**
+	 * Mutator method for brewery state
+	 *
+	 * @param string $newBreweryState
+	 * @throws \InvalidArgumentException if the state is not secure
+	 * @throws \RangeException if the state is not 2 characters
+	 * @throws \TypeError if brewery state is not a string
+	 */
+	public function setBreweryState(string $newBreweryState): void {
+
+		// Enforce that the state is properly formatted.
+		$newBreweryState = trim($newBreweryState);
+		$newBreweryState = strtolower($newBreweryState);
+
+		// Enforce that the state is a string representation of a hexadecimal.
+		if(!ctype_xdigit($newBreweryState)) {
+			throw(new \InvalidArgumentException("brewery state is empty or insecure"));
+		}
+
+		// Enforce that the state is exactly 2 characters.
+		if(strlen($newBreweryState) !== 2) {
+			throw(new \RangeException("brewery state must be 2 characters"));
+		}
+
+		// Store the state.
+		$this->breweryState = $newBreweryState;
+	}
+
+
 }
