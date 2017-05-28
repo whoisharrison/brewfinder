@@ -591,8 +591,6 @@ class Profile implements \JsonSerializable {
 		return ($profile);
 	}
 
-	/**  INSERT INTO profile(profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt) VALUES(:profileImageId, :profileActivationToken, :profileAtHandle, :profileContent, :profileEmail, :profileHash, :profileLocationX, :profileLocationY, :profileName, :profileSalt)" **/
-
 	/**
 	 * Gets the profile by profile activation token
 	 *
@@ -602,6 +600,38 @@ class Profile implements \JsonSerializable {
 	 * @throws \PDOException when mySQL related errors occur
 	 * @throws \TypeError when variables are not the correct data type
 	 **/
+	public static function getProfileByProfileActivationToken(\PDO $pdo, ?string $profileActivationToken): ?Profile {
+		// make sure the activation token is in the right format and that it is a string representation of a hexadecimal
+		$profileActivationToken = trim($profileActivationToken);
+		if(ctype_xdigit($profileActivationToken) == false) {
+			throw(new \InvalidArgumentException("profile activation token is in the wrong format"));
+		}
+
+		// create the query template
+		$query = "SELECT profileId, profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt FROM profile WHERE profileActivationToken = :profileActivationToken";
+		$statement = $pdo->prepare($query);
+
+		// bind the profile activation token to the placeholder in the template
+		$parameters = ["profileActivationToken" => $profileActivationToken];
+		$statement->execute($parameters);
+
+		// grab the profile from mySQL
+		try {
+			$profile = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$profile = new Profile($row["profileId"], $row["profileImageId"], $row["profileActivationToken"], $row["profileAtHandle"], $row["profileContent"], $row["profileEmail"], $row["profileHash"], $row["profileLocationX"], $row["profileLocationY"], $row["profileName"], $row["profileSalt"]);
+			}
+		} catch(\Exception $exception) {
+			// if the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return($profile);
+	}
+
+
+	/**  INSERT INTO profile(profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt)
 
 	/**
 	 * Gets the profile by at handle
