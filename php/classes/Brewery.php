@@ -408,6 +408,35 @@ class Brewery implements \JsonSerializable {
 		$this->breweryHash = $newBreweryHash;
 	}
 
+	/**
+	 * Accessor method for brewery image id
+	 * @return int|null value of brewery image id
+	 **/
+	public function getBreweryImageId(): ?int {
+		return($this->breweryImageId);
+	}
+
+	/**
+	 * Mutator method for brewery image id
+	 * @param int $newBreweryImageId
+	 * @throws \RangeException if brewery image id is not positive
+	 * @throws \TypeError if brewery image id is not an int
+	 **/
+	public function setBreweryImageId(?int $newBreweryImageId) : void {
+		if ($newBreweryImageId === null) {
+			$this->breweryImageId = null;
+			return;
+		}
+
+		// Verify that the brewery image id is positive
+		if($newBreweryImageId <= 0) {
+			throw(new \RangeException("brewery image id is not positive"));
+		}
+
+		// Convert the new brewery image id to a brewery image id and store it
+		$this->breweryImageId = $newBreweryImageId;
+	}
+
 		/**
 		 * Accessor method for brewery location x.
 		 *
