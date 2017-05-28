@@ -5,7 +5,7 @@ require_once("autoload.php");
 
 /**
  * Beer Venue
- * @author QED
+ * @author Billy Trabaudo
  **/
 
 class Beer implements \JsonSerializable {
