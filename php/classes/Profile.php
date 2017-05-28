@@ -680,11 +680,36 @@ class Profile implements \JsonSerializable {
 	 * @return \PDOException when mySQL related errors occur
 	 * @throws \TypeError when variables are not the correct data type
 	 */
+	public static function getProfileByProfileEmail(\PDO $pdo, string $profileEmail): ?Profile {
+		// sanitize the email before searchiing
+		$profileEmail = trim($profileEmail);
+		$profileEmail = filter_var($profileEmail, FILTER_VALIDATE_EMAIL);
+		if(empty($profileEmail) === true) {
+			throw(new \PDOException("not a valid email"));
+		}
 
+		// create query tempalte
+		$query = "SELECT profileId, profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt FROM profile WHERE profileEmail = :profileEmail";
+		$statement = $pdo->prepare($query);
 
-	/**  INSERT INTO profile(profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt)
+		// bind the profile id to the place holder in the template
+		$parameters = ["profileEmail" => $profileEmail];
+		$statement->execute($parameters);
 
-
+		// grab the profile from mySQL
+		try {
+			$profile = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$profile = new Profile($row["profileId"], $row["profileImageId"], $row["profileActivationToken"], $row["profileAtHandle"], $row["profileContent"], $row["profileEmail"], $row["profileHash"], $row["profileLocationX"], $row["profileLocationY"], $row["profileName"], $row["profileSalt"]);
+			}
+		} catch(\Exception $exception) {
+			//if the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return($profile);
+	}
 	/**
 	 * formats the state variables for JSON serialization
 	 *
