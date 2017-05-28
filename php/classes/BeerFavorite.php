@@ -11,8 +11,8 @@ require_once("autoload.php");
  * version 0.0.0
  * */
 
-class BeerFavorite implements \JsonSerialize {
-	use ValidateDate;
+class BeerFavorite implements \JsonSerializable {
+	
 	
 	/*
 	 * primary key for the beer favorite
@@ -38,7 +38,7 @@ class BeerFavorite implements \JsonSerialize {
 	 * favorites date
 	 *
 	 */
-	private $beerFavoriteDate;
+	private $beerFavoriteDateTime;
 
 	
 	/*
@@ -46,7 +46,7 @@ class BeerFavorite implements \JsonSerialize {
 	 * @param int|null $newBeerFavoriteId id of this beerFavorite or null if a new favorite
 	 * @param int $newBeerFavoriteProfileId id of the Profile that did this favorite
 	 * @param int $newBeerFavoriteBreweryId id of the Brewery
-	 * @param int $newBeerFavoriteDate
+	 * @param int $newBeerFavoriteDateTime
 	 * @param string $newBeerFavoriteStyle style of beer.
 	 *
 	 * @throws \InvalidArgumentException if data types are not valid
@@ -56,14 +56,14 @@ class BeerFavorite implements \JsonSerialize {
 	 * */
 	
 	
-	public function __construct(int $newBeerFavoriteId, int $newBeerFavoriteBeerId, int $newBeerFavoriteProfileId, int $newBeerFavoriteDate) {
+	public function __construct(int $newBeerFavoriteId, int $newBeerFavoriteBeerId, int $newBeerFavoriteProfileId, $newBeerFavoriteDateTime) {
 		try {
 		
 		$this->setBeerFavoriteId($newBeerFavoriteId);
 		$this->setBeerFavoriteBeerId($newBeerFavoriteBeerId);
 		
 		$this->setBeerFavoriteProfileId($newBeerFavoriteId);
-		$this->setBeerFavoriteDate($newBeerFavoriteDate);
+		$this->setBeerFavoriteDateTime($newBeerFavoriteDateTime);
 		
 		}
 		// determine exception type thrown
@@ -83,7 +83,7 @@ class BeerFavorite implements \JsonSerialize {
 	}
 	
 	/**
-	 * mutator method for product id
+	 * mutator method for beerFavoriteId
 	 *
 	 * @param int|null $newBeerFavoriteId
 	 * @throws \RangeException if $newBeerFavoriteId is not positive
@@ -92,10 +92,10 @@ class BeerFavorite implements \JsonSerialize {
 	 * */
 	
 	/**
-	 * @param mixed $beerFavoriteId
+	 * @param mixed $newBeerFavoriteId
 	 */
-	public function setBeerFavoriteId( int $newBeerFavoriteId) : void
-	{
+	public function setBeerFavoriteId( int $newBeerFavoriteId) : void {
+		
 		if($newBeerFavoriteId === null ) {
 			$this->beerFavoriteId = null;
 			return;
@@ -128,7 +128,7 @@ class BeerFavorite implements \JsonSerialize {
 	 *
 	 * */
 	/**
-	 * @param mixed $beerFavoriteBeerId
+	 * @param mixed $newBeerFavoriteBeerId
 	 */
 	public function setBeerFavoriteBeerId(int $newBeerFavoriteBeerId) : void
 	{
@@ -148,7 +148,7 @@ class BeerFavorite implements \JsonSerialize {
 		return ($this->beerFavoriteProfileId);
 	}
 	
-	/*
+	/**
 	 * mutator method for beerFavoriteProfileId
 	 *
 	 * @param int $newBeerFavoriteProfileId new value of id
@@ -157,7 +157,7 @@ class BeerFavorite implements \JsonSerialize {
 	 *
 	 * */
 	/**
-	 * @param mixed $beerFavoriteProfileId
+	 * @param mixed $newBeerFavoriteProfileId
 	 */
 	public function setBeerFavoriteProfileId(int $newBeerFavoriteProfileId) : void
 	{
@@ -169,33 +169,46 @@ class BeerFavorite implements \JsonSerialize {
 	}
 	
 	/**
-	 * Accessor method for BeerFavoriteBeerId
+	 * accessor method for BeerDateTime
+	 *
+	 * @return \DateTime value of BeerDateTime
+	 */
+	
+	/**
 	 * @return mixed
 	 */
-	public function getBeerFavoriteDate(): int
-	{
-		return ($this->beerFavoriteBeerId);
+	public function getBeerFavoriteDateTime(): \DateTime {
+		return $this->beerFavoriteDateTime;
 	}
 	
-	/*
-	 * mutator method for beerFavoriteBeerId
+	/**
+	 * mutator method for beerFavoriteDateTime
 	 *
-	 * @param int $newBeerFavoriteBeerId new value of id
+	 * @param null $newBeerFavoriteDateTime
 	 * @throws \RangeException if the id is not positive
 	 * @throw \TypeError if the id is not an int
 	 *
 	 * */
+	
 	/**
-	 * @param mixed $beerFavoriteBeerId
+	 * @param mixed $beerFavoriteDateTime
 	 */
-	public function setBeerFavoriteDate(int $newBeerFavoriteDate) : void
-	{
-		// verifies id is positive
-		if($newBeerFavoriteDate <= 0) {
-			throw(new \RangeException("Id is not positve"));
+	public function setBeerFavoriteDateTime($newBeerFavoriteDateTime = null ) : void {
+		// if the data is null, use the current date and time
+		if($newBeerFavoriteDateTime === null) {
+			$this->newBeerFavoriteDateTime = new \DateTime();
+			return;
 		}
-		$this->beerFavoriteBeerId = $newBeerFavoriteBeerId;
+		// store the validateDate trait
+		try {
+			$newBeerFavoriteDateTime = self::validateDateTime($newBeerFavoriteDateTime);
+		} catch(\InvalidArgumentException | \RangeException $exception) {
+			$exceptionType = get_class($exception);
+			throw(new$exceptionType($exception->getMessage(), 0, $exception));
+		}
+		$this->beerFavoriteDateTime=$newBeerFavoriteDateTime;
 	}
+	
 	
 	
 	/**
@@ -213,10 +226,10 @@ class BeerFavorite implements \JsonSerialize {
 			throw(new \PDOException("not a valid favorite"));
 		}
 		// creates query table
-		$query = "INSERT INTO BeerFavorite(beerFavoriteId, beerFavoriteBeerId, beerFavoriteProfileId) VALUES (:beerFavoriteProfileId, :beerFavoriteBeerId, :beerFavoriteProfileId)";
+		$query = "INSERT INTO BeerFavorite(beerFavoriteId, beerFavoriteBeerId, beerFavoriteProfileId, beerFavoriteDateTime) VALUES (:beerFavoriteId, :beerFavoriteBeerId, :beerFavoriteProfileId, :beerFavoriteDateTime)";
 		$statement = $pdo->prepare($query);
 		//bind the member vars to the place holders
-		$parameters = ["beerFavoriteId" => $this->beerFavoriteId, "beerFavoriteBeerId" => $this->beerFavoriteBeerId, "beerFavoriteProfileId" => $this->beerFavoriteProfileId];
+		$parameters = ["beerFavoriteId" => $this->beerFavoriteId, "beerFavoriteBeerId" => $this->beerFavoriteBeerId, "beerFavoriteProfileId" => $this->beerFavoriteProfileId, "beerFavoriteDateTime" => $this->beerFavoriteDateTime];
 		$statement->execute($parameters);
 	}
 	
@@ -229,13 +242,13 @@ class BeerFavorite implements \JsonSerialize {
 	**/
 	public function delete(\PDO $pdo) : void {
 		// ensure the object exist before deleting
-		if($this->beerFavoriteId === null || $this->beerFavoriteBeerId === null || $this->beerFavoriteProfileId === null) {
+		if($this->beerFavoriteId === null || $this->beerFavoriteBeerId === null || $this->beerFavoriteProfileId === null || $this->beerFavoriteDateTime) {
 			throw(new \PDOException("not a valid favorite"));
 		}
 		// create query template
-		$query = "DELETE FROM BeerFavorite WHERE beerFavoriteId = :beerFavoriteId AND beerFavoriteBeerId = :beerFavoriteBeerId AND beerFavoriteProfileId = :beerFavoriteProfileId";
+		$query = "DELETE FROM BeerFavorite WHERE beerFavoriteId = :beerFavoriteId AND beerFavoriteBeerId = :beerFavoriteBeerId AND beerFavoriteProfileId = :beerFavoriteProfileId AND beerFavoriteDateTime = :beerFavoriteDateTime";
 		$statement = $pdo->prepare($query);
-		$parameters = ["beerFavoriteId" => $this->beerFavoriteId, "beerFavoriteBeerId" => $this->beerFavoriteBeerId, "beerFavoriteProfileId" => $this->beerFavoriteProfileId];
+		$parameters = ["beerFavoriteId" => $this->beerFavoriteId, "beerFavoriteBeerId" => $this->beerFavoriteBeerId, "beerFavoriteProfileId" => $this->beerFavoriteProfileId, "beerFavoriteDateTime" => $this->beerFavoriteDateTime];
 		$statement->execute($parameters);
 	}
 	
@@ -245,9 +258,12 @@ class BeerFavorite implements \JsonSerialize {
 	 * @param \PDO $pdo PDO connection obect
 	 * @param int $beerFavoriteId to search for
 	 * @param int $beerFavoriteBeerId to search for
-	 * @param int $beerFavoriteProfileid to search for
+	 * @param int $beerFavoriteProfileId to search for
+	 * @param \DateTime $beerFavoriteDateTim
+	 *
+	 * return beerFavorite
 	 */
-	public static function getFavoriteByBeerFavoriteIdAndBeerFavoriteBeerIdAndBeerFavoriteProfileId(\PDO $pdo, int $beerFavoriteId, int $beerFavoriteBeerId, int $beerFavoriteProfileId) : ?BeerFavorite {
+	public static function getFavoriteByBeerFavoriteIdAndBeerFavoriteBeerIdAndBeerFavoriteProfileIdAndBeerFavoriteDateTime(\PDO $pdo, int $beerFavoriteId, int $beerFavoriteBeerId, int $beerFavoriteProfileId, \DateTime $beerFavoriteDateTime) : ?BeerFavorite {
 		// sanitize the faovite id before search
 		if($beerFavoriteId <= 0) {
 			throw(new \PDOException("Id not positive"));
@@ -258,19 +274,26 @@ class BeerFavorite implements \JsonSerialize {
 		if($beerFavoriteProfileId <= 0) {
 			throw(new \PDOException("Id not positive"));
 		}
+		if($beerFavoriteDateTime <= 0) {
+			throw(new\PDOException("Can't have negative Time"));
+		}
+		
+		
 		// create query table
-		$query = "SELECT beerFavoriteId, beerFavoriteBeerId, beerFavoriteProfileId FROM BeerFavorite WHERE beerFavoriteId =:beerFavoriteId AND beerFavoriteBeerId = :beerFavoriteBeerId AND beerFavoriteProfileId = :beerFavoriteProfileId";
+		$query = "SELECT beerFavoriteId, beerFavoriteBeerId, beerFavoriteProfileId, beerFavoriteDateTime FROM BeerFavorite WHERE beerFavoriteId =:beerFavoriteId AND beerFavoriteBeerId = :beerFavoriteBeerId AND beerFavoriteProfileId = :beerFavoriteProfileId AND beerFavoriteDateTime = :beerFavoriteDateTime";
 		$statement = $pdo->prepare($query);
 		//bind the placeholders
-		$parameters = ["beerFavoriteId" => $beerFavoriteId, "beerFavoriteBeerId" => $beerFavoriteBeerId, "beerFavoriteProfileId" => $beerFavoriteProfileId];
+		$parameters = ["beerFavoriteId" => $beerFavoriteId, "beerFavoriteBeerId" => $beerFavoriteBeerId, "beerFavoriteProfileId" => $beerFavoriteProfileId, "beerFavoriteDateTime" => $beerFavoriteDateTime];
 		$statement->execute($parameters);
+		
+		
 		// grab the favorite from mySQL
 		try {
 			$beerFavorite = null;
 			$statement->setFetchMode(\PDO::FETCH_ASSOC);
 			$row = $statement->fetch();
 			if($row !== false ) {
-				$beerFavorite = new BeerFavorite($row ["beerFavoriteId"], $row[$beerFavoriteBeerid], $row[$this->beerFavoriteProfileId]);
+				$beerFavorite = new BeerFavorite($row ["beerFavoriteId"], $row["beerFavoriteBeerId"], $row["beerFavoriteProfileId"], $row["beerFavoriteDateTime"]);
 			}
 		}    catch(\Exception $exception) {
 			//if the row can't convert rethrow it
@@ -293,7 +316,7 @@ class BeerFavorite implements \JsonSerialize {
 			throw(new \PDOException("Id not positive"));
 		}
 		// create query table
-		$query = "SELECT beerFavoriteId beerFavoriteProfileId, beerFavoriteBeeId FROM beerFavorite WHERE beerFavoriteId = :beerFavoriteId";
+		$query = "SELECT beerFavoriteId beerFavoriteProfileId, beerFavoriteBeerId, beerFavoriteDateTime FROM BeerFavorite WHERE beerFavoriteId = :beerFavoriteId";
 		$statement = $pdo->prepare($query);
 		//bind the placeholders
 		$parameters = ["beerFavoriteId" => $beerFavoriteId];
@@ -305,9 +328,9 @@ class BeerFavorite implements \JsonSerialize {
 		
 		while(($row = $statement->fetch()) !== false) {
 			 try {
-				 $beerFavorite = new BeerFavorite($row["beerFavoriteId"], $row ["beerFavoriteProfileId"], $row ["beerFavoriteBeerId"]);
-				 $beerFavorites[$beerFavorite->key()] = $beerFavorite;
-				 $beerFavorite->next();
+				 $beerFavorite = new BeerFavorite($row["beerFavoriteId"], $row ["beerFavoriteProfileId"], $row ["beerFavoriteBeerId"], $row["beerFavoriteDateTime"]);
+				 $beerFavorites[$beerFavorites->key()] = $beerFavorite;
+				 $beerFavorites->next();
 			 } catch (\Exception $exception) {
 			 	// if the row couldn't be converted rethrow it
 				 throw(new \PDOException($exception->getMessage(), 0, $exception));
@@ -331,7 +354,7 @@ class BeerFavorite implements \JsonSerialize {
 			throw(new \PDOException("Id not positive"));
 		}
 		// create query table
-		$query = "SELECT beerFavoriteId beerFavoriteProfileId, beerFavoriteBeeId FROM BeerFavorite WHERE beerFavoriteProfileId = :beerFavoriteProfileId";
+		$query = "SELECT beerFavoriteId, beerFavoriteProfileId, beerFavoriteBeerId, beerFavoriteDatetime FROM BeerFavorite WHERE beerFavoriteProfileId = :beerFavoriteProfileId";
 		$statement = $pdo->prepare($query);
 		//bind the placeholders
 		$parameters = ["beerFavoriteId" => $beerFavoriteProfileId];
@@ -343,9 +366,9 @@ class BeerFavorite implements \JsonSerialize {
 		
 		while(($row = $statement->fetch()) !== false) {
 			try {
-				$beerFavorite = new BeerFavorite($row["beerFavoritePId"], $row ["beerFavoriteProfileId"], $row ["beerFavoriteBeerId"]);
-				$beerFavorites[$beerFavorite->key()] = $beerFavorite;
-				$beerFavorite->next();
+				$beerFavorite = new BeerFavorite($row["beerFavoriteId"], $row ["beerFavoriteProfileId"], $row ["beerFavoriteBeerId"], $row["beerFavoriteDateTime"]);
+				$beerFavorites[$beerFavorites->key()] = $beerFavorite;
+				$beerFavorites->next();
 			} catch (\Exception $exception) {
 				// if the row couldn't be converted rethrow it
 				throw(new \PDOException($exception->getMessage(), 0, $exception));
@@ -364,12 +387,12 @@ class BeerFavorite implements \JsonSerialize {
 	 * @param int $beerFavoriteProfileid to search for
 	 */
 	public static function getFavoriteByBeerFavoriteBeerId(\PDO $pdo, int $beerFavoriteBeerId) : \SPLFixedArray {
-		// sanitize the faovite id before search
+		// sanitize the favorite id before search
 		if($beerFavoriteBeerId <= 0) {
 			throw(new \PDOException("Id not positive"));
 		}
 		// create query table
-		$query = "SELECT beerFavoriteId beerFavoriteProfileId, beerFavoriteBeeId FROM BeerFavorite WHERE beerFavoriteBeerId = :beerFavoriteBeerId";
+		$query = "SELECT beerFavoriteId beerFavoriteProfileId, beerFavoriteBeeId beerFavoriteDateTime FROM BeerFavorite WHERE beerFavoriteBeerId = :beerFavoriteBeerId";
 		$statement = $pdo->prepare($query);
 		//bind the placeholders
 		$parameters = ["beerFavoriteBeerId" => $beerFavoriteBeerId];
@@ -381,9 +404,9 @@ class BeerFavorite implements \JsonSerialize {
 		
 		while(($row = $statement->fetch()) !== false) {
 			try {
-				$beerFavorite = new BeerFavorite($row["beerFavoriteId"], $row ["beerFavoriteProfileId"], $row ["beerFavoriteBeerId"]);
-				$beerFavorites[$beerFavorite->key()] = $beerFavorite;
-				$beerFavorite->next();
+				$beerFavorite = new BeerFavorite($row["beerFavoriteId"], $row ["beerFavoriteProfileId"], $row ["beerFavoriteBeerId"], $row ["beerFavoriteDateTime"]);
+				$beerFavorites[$beerFavorites->key()] = $beerFavorite;
+				$beerFavorites->next();
 			} catch (\Exception $exception) {
 				// if the row couldn't be converted rethrow it
 				throw(new \PDOException($exception->getMessage(), 0, $exception));
@@ -391,6 +414,61 @@ class BeerFavorite implements \JsonSerialize {
 			
 		}
 		return ($beerFavorites);
+	}
+ /**
+* gets an array of readings based on its date
+*
+* @param \PDO $pdo connection object
+* @param \DateTime $beerFavoriteSunriseDateTime beginning date to search for
+* @param \DateTime $beerFavoriteSunsetDateTime ending date to search for
+* @return \SplFixedArray of readings found
+* @throws \PDOException when mySQL related errors occur
+* @throws \TypeError when variables are not the correct dates are in the wrong format
+* @throws \InvalidArgumentException if either sun dates are in the wrong format
+**/
+ 
+	public static function getFavoriteByBeerFavoriteDateTime (\PDO $pdo, $beerFavoriteSunriseDateTime, $beerFavoriteSunsetDateTime) : \SplFixedArray {
+		//enforce both date are present
+		if((empty ($beerFavoriteSunriseDateTime) === true) || (empty ($beerFavoriteSunsetDateTime) === true)) {
+			throw (new \InvalidArgumentException("dates are empty or insecure"));
+		}
+		//ensure both dates are in the correct format and are in the correct format and are secure
+		try{
+			$beerFavoriteSunriseDateTime = self::validateDateTime($beerFavoriteSunriseDateTime);
+			$beerFavoriteSunsetDateTime = self::validateDateTime($beerFavoriteSunsetDateTime);
+		} catch(\InvalidArgumentException | \RangeException $exception) {
+			$exceptionType = get_class($exception);
+			throw(new $exceptionType($exception->getMessage(), 0, $exception));
+		}
+		
+		
+		//create query template
+		$query = "SELECT beerFavoriteId, beerFavoriteProfileId, beerFavoriteBeerId, beerFavoriteDateTime from BeerFavorite WHERE beerFavoriteDateTime >= :beerFavoriteSunriseDateTime AND beerFavoriteDateTime <= :beerFavoriteSunsetDateTime LIMIT :startRow, :pageSize ";
+		$statement= $pdo->prepare($query);
+		
+		
+		//format the dates so that mySQL can use them
+		$formattedBeerFavoriteSunriseDateTime = $beerFavoriteSunriseDateTime->format("Y-m-d H:i:s.u");
+		$formattedBeerFavoriteSunsetDate = $beerFavoriteSunsetDateTime->format("Y-m-d H:i:s.u");
+		$parameters = ["beerFavoriteSunriseDateTime" => $formattedBeerFavoriteSunriseDateTime, "beerFavoriteSunsetDate" => $formattedBeerFavoriteSunsetDate];
+		$statement->bindParam(":startRow", $startRow, \PDO::PARAM_INT);
+		$statement->bindParam(":pageSize", self::$pageSize);
+		$statement->execute($parameters);
+		
+		
+		//build an array of readings
+		$beerFavorites = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while(($row = $statement->fetch()) !== false) {
+			try{
+				$beerFavorite = new BeerFavorite($row["beerFavoriteId"], $row ["beerFavoriteProfileId"], $row ["beerFavoriteBeerId"], $row["beerFavoriteDateTime"]);
+				$beerFavorites[$beerFavorites->key()] = $beerFavorite;
+				$beerFavorites->next();
+			} catch(\Exception $exception) {
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return($beerFavorites);
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 <?php
-namespace com/michaelharrisonwebdev;
+//namespace com/michaelharrisonwebdev;
 require_once("autoload.php");
 /**
  * Brewery Class for Brewfinder
@@ -203,7 +203,6 @@ class Brewery implements \JsonSerializable {
 		function getBreweryAddress1(): string {
 			return ($this->breweryAddress1);
 		}
-	}
 
 		/**
 		 * Mutator method for address 1
@@ -676,5 +675,298 @@ public function setBreweryZip(int $newBreweryZip): void {
 
 	// Convert and store the brewery zip.
 	$this->breweryZip = $newBreweryZip;
+}
 
+	/**
+	 * Inserts this brewery into mySQL.
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError is $pdo is not a PDO connection object
+	 **/
+	public function insert(\PDO $pdo): void {
+
+		// Enforce the breweryId is null (i.e., don't insert a brewery that already exists).
+		if($this->breweryId !== null) {
+			throw(new \PDOException("brewery id already exists"));
+		}
+
+		// Create query template.
+		$query = "INSERT INTO brewery(breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip) VALUES(:breweryId, :breweryAddress1, :breweryAddress2, :breweryCity, :breweryContent, :breweryEmail, :breweryHash, :breweryImageId, :breweryLocationX, :breweryLocationY, :breweryName, :breweryPhone, :brewerySalt, :breweryState)";
+		$statement = $pdo->prepare($query);
+
+		// Bind the member variables to the place holders in the template.
+		$parameters = ["breweryAddress1" => $this->breweryAddress1, "breweryCity" => $this->breweryCity, "breweryContent" => $this->breweryContent, "breweryEmail" => $this->breweryEmail, "breweryHash" => $this->breweryHash, "breweryImageId" => $this->breweryImageId, "breweryLocationX" => $this->breweryLocationX, "breweryLocationY" => $this->breweryLocationY, "breweryName" => $this->breweryName, "breweryPhone" => $this->breweryPhone, "brewerySalt" => $this->brewerySalt, "breweryState" => $this->breweryState, "breweryZip" => $this->breweryZip];
+		$statement->execute($parameters);
+
+		// Update the null breweryId with what mySQL just gave us.
+		$this->breweryId = intval($pdo->lastInsertId());
+	}
+
+	/**
+	 * Deletes this brewery from mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 **/
+	public function delete(\PDO $pdo) : void {
+
+		// Enforce the breweryId is not null (i.e. don't delete a brewery that hasn't been inserted).
+		if($this->breweryId === null) {
+			throw(new \PDOException("unable to delete a brewery that doesn't exist"));
+		}
+
+		// Create query template.
+		$query = "DELETE FROM brewery WHERE breweryId = :breweryId";
+		$statement = $pdo->prepare($query);
+
+		// Bind the member variables to the place holder in the template.
+		$parameters = ["breweryId" => $this->breweryId];
+		$statement->execute($parameters);
+	}
+
+	/**
+	 * Updates this brewery in mySQL.
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 **/
+	public function update(\PDO $pdo) : void {
+
+		// Enforce the breweryId is not null (i.e. don't update a brewery that hasn't been inserted).
+		if($this->breweryId === null) {
+			throw(new \PDOException("unable to update a brewery that does not exist"));
+		}
+
+		// Create query template.
+		$query = "UPDATE brewery SET breweryAddress1 = :breweryAddress1, breweryAddress2 = :breweryAddress2, breweryCity = :breweryCity, breweryContent = :breweryContent, breweryEmail = :breweryEmail, breweryHash = :breweryHash, breweryImageId = :breweryImageId, breweryLocationX = :breweryLocationX, breweryLocationY = :breweryLocationY, breweryName = :breweryName, breweryPhone = :breweryPhone, brewerySalt = :brewerySalt, breweryState = :breweryState, breweryZip = :breweryZip WHERE breweryId = :breweryId";
+		$statement = $pdo->prepare($query);
+
+		// Bind the member variables to the place holders in the template.
+		$parameters = ["breweryId" => $this->breweryId, "breweryProfileId" => $this->breweryProfileId, "breweryAddress1" => $this->breweryAddress1, "breweryCity" => $this->breweryCity, "breweryContent" => $this->breweryContent, "breweryEmail" => $this->breweryEmail, "breweryHash" => $this->breweryHash, "breweryImageId" => $this->breweryImageId, "breweryLocationX" => $this->breweryLocationX, "breweryLocationY" => $this->breweryLocationY, "breweryName" => $this->breweryName, "breweryPhone" => $this->breweryPhone, "brewerySalt" => $this->brewerySalt, "breweryState" => $this->breweryState, "breweryZip" => $this->breweryZip];
+		$statement->execute($parameters);
+	}
+
+	/**
+	 * Get Brewery by brewery id
+	 * *
+	 * @param \PDO $pdo $pdo PDO connection object
+	 * @param int $breweryId brewery id to search for
+	 * @return Brewery|null Brewery or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+	public static function getBreweryByBreweryId(\PDO $pdo, int $breweryId):?Brewery {
+
+		// Sanitize the brewery id before searching
+		if($breweryId <= 0) {
+			throw(new \PDOException("brewery id is not postive"));
+		}
+
+		// Create query template
+		$query = "SELECT breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip FROM brewery WHERE breweryId = :breweryId";
+		$statement = $pdo->prepare($query);
+
+		// Bind the brewery id to the place holder in the template
+		$parameters = ["breweryId" => $breweryId];
+		$statement->execute($parameters);
+
+		// Grab the Brewery from mySQL
+		try {
+			$brewery = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$brewery = new Brewery($row["breweryId"], $row["breweryProfileId"], $row["breweryAddress1"], $row["breweryAddress2"], $row["breweryCity"], $row["breweryContent"], $row["breweryEmail"], $row["breweryHash"], $row["breweryImageId"], $row["breweryLocationX"], $row["breweryLocationY"], $row["breweryName"], $row["breweryPhone"], $row["brewerySalt"], $row["breweryState"], $row["breweryZip"]);
+			}
+		} catch(\Exception $exception) {
+
+			// If the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($brewery);
+	}
+
+	/**
+	 * Get the Brewery by brewery activation token
+	 *
+	 * @param string $breweryActivationToken
+	 * @param \PDO object $pdo
+	 * @return Brewery|null Brewery or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+	public static function getBreweryByBreweryActivationToken(\PDO $pdo, ?string $breweryActivationToken) : ?Brewery {
+
+		// Make sure activation token is in the right format and that it is a string representation of a hexadecimal
+		$breweryActivationToken = trim($breweryActivationToken);
+		if(ctype_xdigit($breweryActivationToken) === false) {
+			throw(new \InvalidArgumentException("brewery activation token is empty or in the wrong format"));
+		}
+
+		// Create the query template
+		$query = "SELECT breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip FROM brewery WHERE breweryActivationToken = :breweryActivationToken";
+		$statement = $pdo->prepare($query);
+
+		// Bind the brewery activation token to the placeholder in the template
+		$parameters = ["breweryActivationToken" => $breweryActivationToken];
+		$statement->execute($parameters);
+
+		// Grab the Brewery from mySQL
+		try {
+			$brewery = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$brewery = new Brewery($row["breweryId"], $row["breweryProfileId"], $row["breweryAddress1"], $row["breweryAddress2"], $row["breweryCity"], $row["breweryContent"], $row["breweryEmail"], $row["breweryHash"], $row["breweryImageId"], $row["breweryLocationX"], $row["breweryLocationY"], $row["breweryName"], $row["breweryPhone"], $row["brewerySalt"], $row["breweryState"], $row["breweryZip"]);
+			}
+		} catch(\Exception $exception) {
+
+			// If the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($brewery);
+	}
+
+	public static function getBreweryByBreweryCity(\PDO $pdo, string $breweryCity) : \SplFixedArray {
+
+		// Sanitize city
+		$breweryCity = trim($breweryCity);
+		$breweryCity = filter_var($breweryCity, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if(empty($breweryCity) === true) {
+			throw(new \PDOException("not a valid city"));
+		}
+
+		// Query for brewery using breweryCity
+		$query = "SELECT breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip FROM brewery WHERE breweryCity LIKE :breweryCity";
+		$statement = $pdo->prepare($query);
+
+		// Bind the brewery city to the placeholder
+		$breweryCity = "%$breweryCity%";
+		$parameters = ["breweryCity" => $breweryCity];
+		$statement->execute($parameters);
+
+		// Build array
+		$breweries = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while (($row = $statement->fetch()) !== false) {
+			try {
+				$brewery = new Brewery($row["breweryId"], $row["breweryProfileId"], $row["breweryAddress1"], $row["breweryAddress2"], $row["breweryCity"], $row["breweryContent"], $row["breweryEmail"], $row["breweryHash"], $row["breweryImageId"], $row["breweryLocationX"], $row["breweryLocationY"], $row["breweryName"], $row["breweryPhone"], $row["brewerySalt"], $row["breweryState"], $row["breweryZip"]);
+				[$breweries->key()] = $brewery;
+				$breweries->next();
+			} catch (\Exception $exception) {
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($breweries);
+	}
+
+	public static function getBreweryByBreweryName(\PDO $pdo, string $breweryName) : SPLFixedArray {
+
+		// Sanitize name
+		$breweryName = trim($breweryName);
+		$breweryName = filter_var($breweryName, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if (empty ($breweryName) === true) {
+			throw(new \PDOException("not a valid name"));
+		}
+
+		// Query for brewery using breweryCity
+		$query = "SELECT breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip FROM brewery WHERE breweryName LIKE :breweryName";
+		$statement = $pdo->prepare($query);
+
+		// Bind the brewery name to the placeholder
+		$breweryName = "%breweryName%";
+		$parameters = ["breweryName" => $breweryName];
+		$statement->execute($parameters);
+
+		// Build array
+		$breweries = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while(($row = $statement->fetch()) !== false) {
+			try {
+				$brewery = new Brewery($row["breweryId"], $row["breweryProfileId"], $row["breweryAddress1"], $row["breweryAddress2"], $row["breweryCity"], $row["breweryContent"], $row["breweryEmail"], $row["breweryHash"], $row["breweryImageId"], $row["breweryLocationX"], $row["breweryLocationY"], $row["breweryName"], $row["breweryPhone"], $row["brewerySalt"], $row["breweryState"], $row["breweryZip"]);
+				$breweries[$breweries->key()] = $brewery;
+				$breweries->next();
+			} catch (\Exception $exception) {
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($breweries);
+	}
+
+	public static function getBreweryByBreweryState(\PDO $pdo, string $breweryState) : \SplFixedArray {
+
+		// Sanitize state
+		$breweryState = trim($breweryState);
+		$breweryState = filter_var($breweryState, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if(empty($breweryState) === true) {
+			throw(new \PDOException("not a valid state"));
+		}
+
+		// Query for brewery using breweryState
+		$query = "SELECT breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip FROM brewery WHERE breweryState LIKE :breweryState";
+		$statement = $pdo->prepare($query);
+
+		// Bind the brewery state to the placeholder
+		$breweryState = "%$breweryState%";
+		$parameters = ["breweryState" => $breweryState];
+		$statement->execute($parameters);
+
+		// Build array
+		$breweries = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while (($row = $statement->fetch()) !== false) {
+			try {
+				$brewery = new Brewery($row["breweryId"], $row["breweryProfileId"], $row["breweryAddress1"], $row["breweryAddress2"], $row["breweryCity"], $row["breweryContent"], $row["breweryEmail"], $row["breweryHash"], $row["breweryImageId"], $row["breweryLocationX"], $row["breweryLocationY"], $row["breweryName"], $row["breweryPhone"], $row["brewerySalt"], $row["breweryState"], $row["breweryZip"]);
+				[$breweries->key()] = $brewery;
+				$breweries->next();
+			} catch (\Exception $exception) {
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($breweries);
+	}
+
+	/**
+	 * Get all Breweries
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @return \SplFixedArray SplFixedArray of Breweries found or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+	public static function getAllBreweries(\PDO $pdo): \SplFixedArray {
+
+		// Create query template
+		$query = "SELECT breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip FROM brewery";
+		$statement = $pdo->prepare($query);
+		$statement->execute();
+
+		// Build an array of Breweries
+		$breweries = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while(($row = $statement->fetch()) !== false) {
+			try {
+				$brewery = new Brewery($row["breweryId"], $row["breweryProfileId"], $row["breweryAddress1"], $row["breweryAddress2"], $row["breweryCity"], $row["breweryContent"], $row["breweryEmail"], $row["breweryHash"], $row["breweryImageId"], $row["breweryLocationX"], $row["breweryLocationY"], $row["breweryName"], $row["breweryPhone"], $row["brewerySalt"], $row["breweryState"], $row["breweryZip"]);
+				$breweries[$breweries->key()] = $brewery;
+				$breweries->next();
+			} catch(\Exception $exception) {
+
+				// If the row couldn't be converted, rethrow it
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($breweries);
+	}
+
+	/**
+	 * Formats the state variables for JSON serialization.
+	 *
+	 * @return array resulting state variables to serialize
+	 **/
+	public function jsonSerialize() {
+		$fields = get_object_vars($this);
+	}
 }
