@@ -5,7 +5,7 @@ require_once dirname(__DIR__, 3) . "/php/lib/xsrf.php";
 require_once ("../encrypted-config.php");
 use com/michaelharrisonwebdev;
 
-/** api for signing out
+/** api for signing in
  *
  * @author michael harrison <mikeharrison34@gmail.com>
  * @version 1.0
