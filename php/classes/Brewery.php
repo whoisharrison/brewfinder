@@ -748,6 +748,47 @@ public function setBreweryZip(int $newBreweryZip): void {
 		$parameters = ["breweryId" => $this->breweryId, "breweryProfileId" => $this->breweryProfileId, "breweryAddress1" => $this->breweryAddress1, "breweryCity" => $this->breweryCity, "breweryContent" => $this->breweryContent, "breweryEmail" => $this->breweryEmail, "breweryHash" => $this->breweryHash, "breweryImageId" => $this->breweryImageId, "breweryLocationX" => $this->breweryLocationX, "breweryLocationY" => $this->breweryLocationY, "breweryName" => $this->breweryName, "breweryPhone" => $this->breweryPhone, "brewerySalt" => $this->brewerySalt, "breweryState" => $this->breweryState, "breweryZip" => $this->breweryZip];
 		$statement->execute($parameters);
 	}
+
+	/**
+	 * Get Brewery by brewery id
+	 * *
+	 * @param \PDO $pdo $pdo PDO connection object
+	 * @param int $breweryId brewery id to search for
+	 * @return Brewery|null Brewery or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+	public static function getBreweryByBreweryId(\PDO $pdo, int $breweryId):?Brewery {
+
+		// Sanitize the brewery id before searching
+		if($breweryId <= 0) {
+			throw(new \PDOException("brewery id is not postive"));
+		}
+
+		// Create query template
+		$query = "SELECT breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip FROM brewery WHERE breweryId = :breweryId";
+		$statement = $pdo->prepare($query);
+
+		// Bind the brewery id to the place holder in the template
+		$parameters = ["breweryId" => $breweryId];
+		$statement->execute($parameters);
+
+		// Grab the Brewery from mySQL
+		try {
+			$brewery = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$brewery = new Brewery($row["breweryId"], $row["breweryProfileId"], $row["breweryAddress1"], $row["breweryAddress2"], $row["breweryCity"], $row["breweryContent"], $row["breweryEmail"], $row["breweryHash"], $row["breweryImageId"], $row["breweryLocationX"], $row["breweryLocationY"], $row["breweryName"], $row["breweryPhone"], $row["brewerySalt"], $row["breweryState"], $row["breweryZip"]);
+			}
+		} catch(\Exception $exception) {
+
+			// If the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($brewery);
+	}
+
 	public function jsonSerialize() {
 		return (get_object_vars($this));
 }
