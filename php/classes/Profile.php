@@ -484,6 +484,32 @@ class Profile implements \JsonSerializable {
 		$this->profileSalt = $newProfileSalt;
 	}
 
+	/**
+	 * Inserts this profile into mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when $pdo is not a PDO connection object
+	 **/
+	public function insert(\PDO $pdo): void {
+		// enforce the profileId is null (i.e., don't insert a profile that already exists)
+		if($this->profileId !== null) {
+			throw(new \PDOException("profile id already exists"));
+		}
+
+		// create query template
+		$query = "INSERT INTO profile(profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt) VALUES(:profileImageId, :profileActivationToken, :profileAtHandle, :profileContent, :profileEmail, :profileHash, :profileLocationX, :profileLocationY, :profileName, :profileSalt)";
+		$statement = $pdo->prepare($query);
+
+		// bind the member variables to the place holders in the template
+		$parameters = ["profileImageId" => $this->profileImageId, "profileActivationToken" => $this->profileActivationToken, "profileAtHandle" => $this->profileAtHandle, "profileContent" => $this->profileContent, "profileEmail" => $this->profileEmail, "profileHash" => $this->profileHash, "profileLocationX" => $this->profileLocationX, "profileLocationY" => $this->profileLocationY, "profileName" => $this->profileName, "profileSalt" => $this->profileSalt];
+		$statement->execute($parameters);
+
+		// update the null profileId with what mySQL just gave us
+		$this->profileId = intVal($pdo->lastInsertId());
+	}
+
+
 
 
 
