@@ -4,7 +4,7 @@
 require_once("autoload.php");
 
 /**
- * Beer Venue
+ * Beer Class
  * @author Billy Trabaudo
  **/
 
