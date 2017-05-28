@@ -88,6 +88,7 @@ CREATE TABLE beer (
 CREATE TABLE breweryImage (
 	breweryImageImageId INT UNSIGNED NOT NULL,
 	breweryImageBreweryId INT UNSIGNED NOT NULL,
+	breweryImageCloudinaryId VARCHAR(32) NOT NULL,
 	INDEX(breweryImageImageId),
 	INDEX(breweryImageBreweryId),
 	FOREIGN KEY(breweryImageImageId) REFERENCES image(imageId),
@@ -98,6 +99,7 @@ CREATE TABLE breweryImage (
 CREATE TABLE beerImage (
 	beerImageImageId INT UNSIGNED NOT NULL,
 	beerImageBreweryId INT UNSIGNED NOT NULL,
+	beerImageCloudinaryId VARCHAR(32) NOT NULL,
 	INDEX(beerImageImageId),
 	INDEX(beerImageBreweryId),
 	FOREIGN KEY(beerImageImageId) REFERENCES image(imageId),
