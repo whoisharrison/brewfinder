@@ -123,15 +123,40 @@ class BeerImage implements \JsonSerializable {
 
     }
 
-    public function update(\PDO $pdo) : void {
-        //enforce that beer image image id is not null
-        if($this->beerImageImageId === null) {
-            throw(new \PDOException("unable to update a profile that does not exist"));
+    public static function getBeerImageByBeerImageImageID(\PDO $pdo, int $beerImageImageId) : \SplFixedArray {
+        //make sure beer image image id is positive
+        if($beerImageImageId <= 0) {
+            throw(new \PDOException("beer image image id is not positive"));
         }
 
+        //query for beer image
+        $query = "SELECT beerImageImageId, beerImageBreweryId FROM beerImage WHERE beerImageImageId = :beerImageImageId";
 
+        $statement = $pdo->prepare($query);
+        $parameters = ["beerImageImageId" => $beerImageImageId];
+        $statement->execute($parameters);
+        //what is this???
+        $beerImages = new \SplFixedArray($statement->rowcount());
+        while(($row = $statement->fetch()) !== false) {
 
+            //fetch venue from mySQL
+            try {
+                $beerImage = new BeerImage($row ["beerImageImageId"], $row ["beerImageBreweryId"]);
+
+                $beerImages[$beerImages->key()] =$beerImage;
+                $beerImages->next();
+            } catch (\Exception $exception) {
+                throw(new \PDOException($exception->getMessage(), 0, $exception));
+            }
+        }
+        return ($beerImages);
     }
+
+
+
+
+
+
 
 
 
