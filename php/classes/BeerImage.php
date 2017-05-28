@@ -123,7 +123,7 @@ class BeerImage implements \JsonSerializable {
 
     }
 
-    public static function getBeerImageByBeerImageImageID(\PDO $pdo, int $beerImageImageId) : \SplFixedArray {
+    public static function getBeerImageByBeerImageImageId(\PDO $pdo, int $beerImageImageId) : \SplFixedArray {
         //make sure beer image image id is positive
         if($beerImageImageId <= 0) {
             throw(new \PDOException("beer image image id is not positive"));
@@ -135,8 +135,9 @@ class BeerImage implements \JsonSerializable {
         $statement = $pdo->prepare($query);
         $parameters = ["beerImageImageId" => $beerImageImageId];
         $statement->execute($parameters);
-        //what is this???
+
         $beerImages = new \SplFixedArray($statement->rowcount());
+        $statement->setFetchMode(\PDO::FETCH_ASSOC);
         while(($row = $statement->fetch()) !== false) {
 
             //fetch venue from mySQL
@@ -151,6 +152,34 @@ class BeerImage implements \JsonSerializable {
         }
         return ($beerImages);
     }
+
+    public static function getBeerImageByBeerImageBreweryId(\PDO $pdo, int $beerImageBreweryId) : \SplFixedArray {
+        //make sure brewery image is positive
+        if($beerImageBreweryId <= 0) {
+            throw(new \PDOException("brewery image id is not positive"));
+        }
+
+        //query for brewery image
+        $query = "SELECT beerImageImageId, beerImageBreweryId FROM beerImage WHERE beerImageBreweryId = :beerImageBreweryId";
+        $statement = $pdo->prepare($query);
+        $parameters = ["beerImageBreweryId" => $beerImageBreweryId];
+        $statement->execute($parameters);
+
+        $beerImages = new \SplFixedArray($statement->rowCount());
+        $statement->setFetchMode(\PDO::FETCH_ASSOC);
+        while(($row = $statement->fetch()) !== false) {
+            try {
+                $beerImage = new BeerImage($row ["beerImageImageId"], $row ["beerImageBreweryId"]);
+
+                $beerImages[$beerImages->key()] =$beerImage;
+                $beerImages->next();
+            } catch (\Exception $exception) {
+                throw(new \PDOException($exception->getMessage(), 0, $exception));
+
+
+        }
+    }
+    return ($beerImages);
 
 
 
