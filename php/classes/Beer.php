@@ -11,7 +11,7 @@ require_once("autoload.php");
 class Beer implements \JsonSerializable {
 
     /**
-     * @var int $beerid
+     * @var int $beerId
      **/
 
     private $beerId;
