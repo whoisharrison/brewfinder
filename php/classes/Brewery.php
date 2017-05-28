@@ -692,7 +692,7 @@ public function setBreweryZip(int $newBreweryZip): void {
 		}
 
 		// Create query template.
-		$query = "INSERT INTO profile(breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip) VALUES(:breweryId, :breweryAddress1, :breweryAddress2, :breweryCity, :breweryContent, :breweryEmail, :breweryHash, :breweryImageId, :breweryLocationX, :breweryLocationY, :breweryName, :breweryPhone, :brewerySalt, :breweryState)";
+		$query = "INSERT INTO brewery(breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip) VALUES(:breweryId, :breweryAddress1, :breweryAddress2, :breweryCity, :breweryContent, :breweryEmail, :breweryHash, :breweryImageId, :breweryLocationX, :breweryLocationY, :breweryName, :breweryPhone, :brewerySalt, :breweryState)";
 		$statement = $pdo->prepare($query);
 
 		// Bind the member variables to the place holders in the template.
@@ -703,7 +703,51 @@ public function setBreweryZip(int $newBreweryZip): void {
 		$this->breweryId = intval($pdo->lastInsertId());
 	}
 
+	/**
+	 * Deletes this brewery from mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 **/
+	public function delete(\PDO $pdo) : void {
 
+		// Enforce the breweryId is not null (i.e. don't delete a brewery that hasn't been inserted).
+		if($this->breweryId === null) {
+			throw(new \PDOException("unable to delete a brewery that doesn't exist"));
+		}
+
+		// Create query template.
+		$query = "DELETE FROM brewery WHERE breweryId = :breweryId";
+		$statement = $pdo->prepare($query);
+
+		// Bind the member variables to the place holder in the template.
+		$parameters = ["breweryId" => $this->breweryId];
+		$statement->execute($parameters);
+	}
+
+	/**
+	 * Updates this brewery in mySQL.
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 **/
+	public function update(\PDO $pdo) : void {
+
+		// Enforce the breweryId is not null (i.e. don't update a brewery that hasn't been inserted).
+		if($this->breweryId === null) {
+			throw(new \PDOException("unable to update a brewery that does not exist"));
+		}
+
+		// Create query template.
+		$query = "UPDATE brewery SET breweryAddress1 = :breweryAddress1, breweryAddress2 = :breweryAddress2, breweryCity = :breweryCity, breweryContent = :breweryContent, breweryEmail = :breweryEmail, breweryHash = :breweryHash, breweryImageId = :breweryImageId, breweryLocationX = :breweryLocationX, breweryLocationY = :breweryLocationY, breweryName = :breweryName, breweryPhone = :breweryPhone, brewerySalt = :brewerySalt, breweryState = :breweryState, breweryZip = :breweryZip WHERE breweryId = :breweryId";
+		$statement = $pdo->prepare($query);
+
+		// Bind the member variables to the place holders in the template.
+		$parameters = ["breweryId" => $this->breweryId, "breweryProfileId" => $this->breweryProfileId, "breweryAddress1" => $this->breweryAddress1, "breweryCity" => $this->breweryCity, "breweryContent" => $this->breweryContent, "breweryEmail" => $this->breweryEmail, "breweryHash" => $this->breweryHash, "breweryImageId" => $this->breweryImageId, "breweryLocationX" => $this->breweryLocationX, "breweryLocationY" => $this->breweryLocationY, "breweryName" => $this->breweryName, "breweryPhone" => $this->breweryPhone, "brewerySalt" => $this->brewerySalt, "breweryState" => $this->breweryState, "breweryZip" => $this->breweryZip];
+		$statement->execute($parameters);
+	}
 	public function jsonSerialize() {
 		return (get_object_vars($this));
 }
