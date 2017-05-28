@@ -117,6 +117,7 @@ class Brewery implements \JsonSerializable {
 			$this->setBreweryImageId($newBreweryImageId);
 			$this->setBreweryLocationX($newBreweryLocationX);
 			$this->setBreweryLocationY($newBreweryLocationY);
+			$this->setBreweryName($newBreweryName);
 			$this->setBrewerySalt($newBrewerySalt);
 			$this->setBreweryState($newBreweryState);
 			$this->setBreweryZip($newBreweryZip);
@@ -505,4 +506,36 @@ class Brewery implements \JsonSerializable {
 			// Convert and store brewery location y.
 			$this->breweryLocationY = $newBreweryLocationY;
 		}
+
+	/**
+	 * Accessor method for brewery name
+	 * @return string for brewery name
+	 **/
+	public function getBreweryName(): string {
+		return($this->breweryName);
+	}
+
+	/**
+	 * Mutator method for brewery name
+	 * @param string $newBreweryName
+	 * @throws \InvalidArgumentException if the brewery name is not alphanumeric
+	 * @throws \RangeException if the brewery name is greater than 32 characters
+	 **/
+	public function setBreweryName(string $newBreweryName) : void {
+		$newBreweryName = trim($newBreweryName);
+		$newBreweryName = filter_var($newBreweryName, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+
+		// Enforce that brewery name is not empty
+		if(empty($newBreweryName) === true) {
+			throw(new \InvalidArgumentException("brewery name is either empty or insecure"));
+		}
+
+		// Enforce max string length of brewery name
+		if(strlen($newBreweryName) > 32) {
+			throw(new \RangeException("brewery name must be less than 32 characters"));
+		}
+
+		// Take new venue name and store it in venue name
+		$this->breweryName = $newBreweryName;
+	}
 }
