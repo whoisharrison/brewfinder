@@ -130,7 +130,7 @@ class BreweryImage implements \JsonSerializable {
 		}
 
 		// Create query template
-		$query = "DELETE FROM breweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
+		$query = "DELETE breweryImage FROM breweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
 		$statement = $pdo->prepare($query);
 
 		// Bind the member variables to the place holders in the template
@@ -152,3 +152,53 @@ class BreweryImage implements \JsonSerializable {
 		}
 	}
 
+	/**
+	 * Gets the Brewery Image by brewery image image id
+	 *
+	 * @param \PDO $pdo $pdo PDO connection object
+	 * @param int $profileId profile id to search for
+	 * @return BreweryImage|null BreweryImage or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+	public static function getBreweryImageByBreweryImageImageId(\PDO $pdo, int $breweryImageImageId):?BreweryImage {
+
+		// Sanitize the brewery image image id before searching
+		if($breweryImageImageId <= 0) {
+			throw(new \PDOException("brewery image image id is not positive"));
+		}
+
+		// Create query template
+		$query = "SELECT BreweryImage FROM BreweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
+		$statement = $pdo->prepare($query);
+
+		// Bind the brewery image image id to the place holder in the template
+		$parameters = ["breweryImageImageId" => $breweryImageImageId];
+		$statement->execute($parameters);
+
+		// Grab the Brewery image from mySQL
+		try {
+			$breweryImage = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$breweryImage = new BreweryImage($row["breweryImageImageId"], $row["breweryImageBreweryId"]);
+			}
+		} catch(\Exception $exception) {
+
+			// If the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($breweryImage);
+	}
+
+		/**
+		 * formats the state variables for JSON serialization
+		 *
+		 * @return array resulting state variables to serialize
+		 **/
+		public function jsonSerialize() {
+			$fields = get_object_vars($this);
+			return($fields);
+		}
+	}
