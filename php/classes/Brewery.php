@@ -331,6 +331,43 @@ class Brewery implements \JsonSerializable {
 		$this->breweryContent = $newBreweryContent;
 	}
 
+	/**
+	 * Accessor method for email.
+	 *
+	 * @return string value of email
+	 **/
+	/**
+	 * @return string
+	 */
+	public function getBreweryEmail(): string {
+		return $this->breweryEmail;
+	}
+	/**
+	 * Mutator method for email
+	 *
+	 * @param string $newBreweryEmail new value of email
+	 * @throws \InvalidArgumentException if $newBreweryEmail is not a valid email or insecure
+	 * @throws \RangeException if $newBreweryEmail is > 128 characters
+	 * @throws \TypeError if $newBreweryEmail is not a string
+	 **/
+	public function setBreweryEmail(string $newBreweryEmail) : void {
+
+		// Verify the email is secure
+		$newBreweryEmail = trim($newBreweryEmail);
+		$newBreweryEmail = filter_var($newBreweryEmail, FILTER_VALIDATE_EMAIL);
+		if(empty($newBreweryEmail) === true) {
+			throw(new \InvalidArgumentException("brewery email is empty or insecure"));
+		}
+
+		// Verify the email will fit in the database.
+		if(strlen($newBreweryEmail) > 128) {
+			throw(new \RangeException("brewery email is too large"));
+		}
+
+		// Store the email.
+		$this->breweryEmail = $newBreweryEmail;
+	}
+
 		/**
 		 * Accessor method for brewery location x.
 		 *
