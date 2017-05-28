@@ -180,21 +180,21 @@ class BreweryFavorite implements \JsonSerializable {
 	}
 	
 	/**
-	 * mutator method for beerFavoriteDateTime
+	 * mutator method for newBreweryFavoriteDateTime
 	 *
-	 * @param null \ $newBeerFavoriteDateTime
-	 * @throws \RangeException if the id is not positive
+	 * @param null \ $newBreweryFavoriteDateTime
+	 * @throw \RangeException if the id is not positive
 	 * @throw \TypeError if the id is not an int
 	 *
 	 * */
 	
 	/**
-	 * @param mixed $beerFavoriteDateTime
+	 * @param mixed $newBreweryFavoriteDateTime
 	 */
 	public function setBreweryFavoriteDateTime($newBreweryFavoriteDateTime = null ) : void {
 		// if the data is null, use the current date and time
 		if($newBreweryFavoriteDateTime === null) {
-			$this->newBreweryFavoriteDateTime = new \DateTime();
+			$this-> breweryFavoriteDateTime = new \DateTime();
 			return;
 		}
 		// store the validateDate trait
