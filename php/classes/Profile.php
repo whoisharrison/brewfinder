@@ -630,9 +630,6 @@ class Profile implements \JsonSerializable {
 		return($profile);
 	}
 
-
-	/**  INSERT INTO profile(profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt)
-
 	/**
 	 * Gets the profile by at handle
 	 *
@@ -642,6 +639,37 @@ class Profile implements \JsonSerializable {
 	 * @throws \PDOException when mySQL related errors occur
 	 * @throws \TypeError when variables are not the correct data type
 	 **/
+	public static function getProfileByProfileAtHandle(\PDO $pdo, string $profileAtHandle) : \SplFixedArray {
+		// sanitize the at handle before searching
+		$profileAtHandle = trim($profileAtHandle);
+		$profileAtHandle = filter_var($profileAtHandle, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if(empty($profileAtHandle) === true) {
+			throw(new \PDOException("not a valid at handle"));
+		}
+
+		// create query template
+		$query = "SELECT profileId, profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt FROM profile WHERE profileAtHandle = :profileAtHandle";
+		$statement = $pdo->prepare($query);
+
+		// bind the profile at handle to the place holder in the template
+		$parameters = ["profileAtHandle" => $profileAtHandle];
+		$statement->execute($parameters);
+
+		$profiles = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+
+		while(($row = $statement->fetch()) !== false) {
+			try {
+				$profile = new Profile($row["profileId"], $row["profileImageId"], $row["profileActivationToken"], $row["profileAtHandle"], $row["profileContent"], $row["profileEmail"], $row["profileHash"], $row["profileLocationX"], $row["profileLocationY"], $row["profileName"], $row["profileSalt"]);
+				$profiles[$profiles->key()] = $profile;
+				$profiles->next();
+			} catch(\Exception $exception) {
+				//if the row couldn't be converted, rethrow it
+				throw(new \PDOException($exception->getMessage, 0, $exception));
+			}
+		}
+		return($profiles);
+	}
 
 	/**
 	 * Gets the profile by email
@@ -653,6 +681,8 @@ class Profile implements \JsonSerializable {
 	 * @throws \TypeError when variables are not the correct data type
 	 */
 
+
+	/**  INSERT INTO profile(profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt)
 
 
 	/**
