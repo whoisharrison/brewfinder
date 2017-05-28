@@ -368,6 +368,46 @@ class Brewery implements \JsonSerializable {
 		$this->breweryEmail = $newBreweryEmail;
 	}
 
+	/**
+	 * Accessor method for brewery hash
+	 *
+	 * @return string value of hash
+	 */
+	public function getBreweryHash(): string {
+		return $this->breweryHash;
+	}
+
+	/**
+	 * Mutator method for brewery hash
+	 *
+	 * @param string $newBreweryHash
+	 * @throws \InvalidArgumentException if the hash is not secure
+	 * @throws \RangeException if the hash is not 128 characters
+	 * @throws \TypeError if brewery hash is not a string
+	 */
+	public function setBreweryHash(string $newBreweryHash): void {
+
+		// Enforce that the hash is properly formatted.
+		$newBreweryHash = trim($newBreweryHash);
+		$newBreweryHash = strtolower($newBreweryHash);
+		if(empty($newBreweryHash) === true) {
+			throw(new \InvalidArgumentException("brewery password hash is empty or insecure"));
+		}
+
+		// Enforce that the hash is a string representation of a hexadecimal.
+		if(!ctype_xdigit($newBreweryHash)) {
+			throw(new \InvalidArgumentException("brewery password hash is empty or insecure"));
+		}
+
+		// Enforce that the hash is exactly 128 characters.
+		if(strlen($newBreweryHash) !== 128) {
+			throw(new \RangeException("brewery hash must be 128 characters"));
+		}
+
+		// Store the hash.
+		$this->breweryHash = $newBreweryHash;
+	}
+
 		/**
 		 * Accessor method for brewery location x.
 		 *
