@@ -509,7 +509,61 @@ class Profile implements \JsonSerializable {
 		$this->profileId = intVal($pdo->lastInsertId());
 	}
 
+	/**
+	 * Deletes this profile from mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 **/
 
+	/**
+	 * Updates this profile in mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 **/
+
+	/**
+	 * Gets the Profile by profile id
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param int $profileId profile id to search for
+	 * @return Profile|null Profile or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+
+	/**
+	 * Gets the profile by profile activation token
+	 *
+	 * @param string $profileActivationToken
+	 * @param \PDO object $pdo
+	 * @return Profile|null profile or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+
+	/**
+	 * Gets the profile by at handle
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param string $profileAtHandle at handle to search for
+	 * @return \SplFixedArray of all profiles found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+
+	/**
+	 * Gets the profile by email
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param string $profileEmail email to search for
+	 * @return Profile|null Profile or null if not found
+	 * @return \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 */
 
 
 
