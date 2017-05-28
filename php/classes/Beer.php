@@ -74,7 +74,6 @@ class Beer implements \JsonSerializable {
     }
 
     /**
-     *
      * @param int|null $newBeerId
      * @throws \RangeException if $newBeerId is not positive
      * @throws \TypeError if $newBeerId is not an integer or null
@@ -94,6 +93,7 @@ class Beer implements \JsonSerializable {
     }
 
     /**
+     * accessor method
      * @return int|null for beer brewery id
      */
     public function getBeerBreweryId(): ?int {
@@ -122,6 +122,7 @@ class Beer implements \JsonSerializable {
     }
 
     /**
+     * accessor method
      * @return int|null for beer image id
      */
     public function getBeerImageId(): ?int {
@@ -180,6 +181,7 @@ class Beer implements \JsonSerializable {
     }
 
     /**
+     * accessor method
      * @return string|null for beer content
      */
     public function getBeerContent(): ?string {
@@ -207,6 +209,7 @@ class Beer implements \JsonSerializable {
     }
 
     /**
+     * accessor method
      * @return string for beer style
      */
     public function getBeerStyle(): string {
