@@ -298,6 +298,39 @@ class Brewery implements \JsonSerializable {
 		// Convert and store the new brewery city.
 		$this->breweryCity = $newBreweryCity;
 	}
+
+	/**
+	 * Accessor method for brewery content.
+	 *
+	 * @return string brewery content
+	 **/
+	public function getBreweryContent(): string {
+		return($this->breweryContent);
+	}
+
+	/**
+	 * Mutator method for brewery content
+	 * @param string $newBreweryContent
+	 * @throws \InvalidArgumentException if brewery content is not alphanumeric
+	 * @throws \RangeException if brewery content is greater than 750
+	 **/
+	public function setBreweryContent(string $newBreweryContent) : void {
+		$newBreweryContent = filter_var($newBreweryContent, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+
+		// Enforce that brewery content is not empty
+		if(empty($newBreweryContent) === true) {
+			throw(new \InvalidArgumentException("brewery content is either empty or insecure"));
+		}
+
+		// Enforce max string length of 750 on brewery content
+		if(strlen($newBreweryContent) > 750) {
+			throw(new \RangeException("brewery content must be less than 750 characters"));
+		}
+
+		// Take new brewery content, and store it in brewery content
+		$this->breweryContent = $newBreweryContent;
+	}
+
 		/**
 		 * Accessor method for brewery location x.
 		 *
