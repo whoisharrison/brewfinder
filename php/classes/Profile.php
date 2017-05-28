@@ -2,7 +2,7 @@
 namespace com\michaelharrisonwebdev\brewfinder;
 require_once("autoload.php");
 /**
- * Brew Finder Sensor Profile
+ * Brew Finder Profile
  *
  * This is a cross section of what is stored for a Brew Finder user.
  *
