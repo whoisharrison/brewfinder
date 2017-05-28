@@ -868,7 +868,7 @@ public function setBreweryZip(int $newBreweryZip): void {
 		// Sanitize name
 		$breweryName = trim($breweryName);
 		$breweryName = filter_var($breweryName, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-		if (empty ($venueName) === true) {
+		if (empty ($breweryName) === true) {
 			throw(new \PDOException("not a valid name"));
 		}
 
@@ -929,6 +929,44 @@ public function setBreweryZip(int $newBreweryZip): void {
 		return ($breweries);
 	}
 
-		public function jsonSerialize() {
-		return (get_object_vars($this));
+	/**
+	 * Get all Breweries
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @return \SplFixedArray SplFixedArray of Breweries found or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+	public static function getAllBreweries(\PDO $pdo): \SplFixedArray {
+
+		// Create query template
+		$query = "SELECT breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip FROM brewery";
+		$statement = $pdo->prepare($query);
+		$statement->execute();
+
+		// Build an array of Breweries
+		$breweries = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while(($row = $statement->fetch()) !== false) {
+			try {
+				$brewery = new Brewery($row["breweryId"], $row["breweryProfileId"], $row["breweryAddress1"], $row["breweryAddress2"], $row["breweryCity"], $row["breweryContent"], $row["breweryEmail"], $row["breweryHash"], $row["breweryImageId"], $row["breweryLocationX"], $row["breweryLocationY"], $row["breweryName"], $row["breweryPhone"], $row["brewerySalt"], $row["breweryState"], $row["breweryZip"]);
+				$breweries[$breweries->key()] = $brewery;
+				$breweries->next();
+			} catch(\Exception $exception) {
+
+				// If the row couldn't be converted, rethrow it
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($breweries);
+	}
+
+	/**
+	 * Formats the state variables for JSON serialization.
+	 *
+	 * @return array resulting state variables to serialize
+	 **/
+	public function jsonSerialize() {
+		$fields = get_object_vars($this);
+	}
 }
