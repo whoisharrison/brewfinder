@@ -571,4 +571,41 @@ class Brewery implements \JsonSerializable {
 		$this->breweryPhone = $newBreweryPhone;
 	}
 
+	/**
+	 * Accessor method for brewery salt.
+	 *
+	 * @return string representation of the salt hexadecimal
+	 */
+	public function getBrewerySalt(): string {
+		return $this->brewerySalt;
+	}
+
+	/**
+	 * Mutator method for brewery salt
+	 *
+	 * @param string $newBrewerySalt
+	 * @throws \InvalidArgumentException if the salt is not secure
+	 * @throws \RangeException if the salt is not 64 characters
+	 * @throws \TypeError if brewery salt is not a string
+	 */
+	public function setBrewerySalt(string $newBrewerySalt): void {
+
+		// Enforce that the salt is properly formatted.
+		$newBrewerySalt = trim($newBrewerySalt);
+		$newBrewerySalt = strtolower($newBrewerySalt);
+
+		// Enforce that the salt is a string representation of a hexadecimal.
+		if(!ctype_xdigit($newBrewerySalt)) {
+			throw(new \InvalidArgumentException("brewery password salt is empty or insecure"));
+		}
+
+		// Enforce that the salt is exactly 128 characters.
+		if(strlen($newBrewerySalt) !== 64) {
+			throw(new \RangeException("brewery salt must be 64 characters"));
+		}
+
+		// Store the salt.
+		$this->brewerySalt = $newBrewerySalt;
+	}
+
 }
