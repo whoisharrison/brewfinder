@@ -364,7 +364,7 @@ class BreweryFavorite implements \JsonSerializable {
 		
 		while(($row = $statement->fetch()) !== false) {
 			try {
-				$breweryFavorite = new new BreweryFavorite($row["breweryFavoriteId"], $row ["breweryFavoriteProfileId"], $row ["breweryFavoriteBreweryId"], $row["breweryFavoriteDateTime"]);
+				$breweryFavorite = new BreweryFavorite($row["breweryFavoriteId"], $row ["breweryFavoriteProfileId"], $row ["breweryFavoriteBreweryId"], $row["breweryFavoriteDateTime"]);
 				$breweryFavorites[$breweryFavorites->key()] = $breweryFavorite;
 				$breweryFavorites->next();
 			} catch (\Exception $exception) {
