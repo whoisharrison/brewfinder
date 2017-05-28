@@ -535,7 +535,40 @@ class Brewery implements \JsonSerializable {
 			throw(new \RangeException("brewery name must be less than 32 characters"));
 		}
 
-		// Take new venue name and store it in venue name
+		// Take new brewery name and store it in brewery name
 		$this->breweryName = $newBreweryName;
 	}
+
+	/**
+	 * Accessor method for brewery phone
+	 * @return string for brewery phone
+	 **/
+	public function getBreweryPhone(): string {
+		return($this->breweryPhone);
+	}
+
+	/**
+	 * Mutator method for brewery phone
+	 * @param string $newBreweryPhone
+	 * @throws \InvalidArgumentException if the brewery phone is not alphanumeric
+	 * @throws \RangeException if the brewery phone is greater than 12 characters
+	 **/
+	public function setBreweryPhone(string $newBreweryPhone) : void {
+		$newBreweryPhone = trim($newBreweryPhone);
+		$newBreweryPhone = filter_var($newBreweryPhone, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+
+		// Enforce that brewery phone is not empty
+		if(empty($newBreweryPhone) === true) {
+			throw(new \InvalidArgumentException("brewery phone is either empty or insecure"));
+		}
+
+		// Enforce max string length of brewery phone
+		if(strlen($newBreweryPhone) > 12) {
+			throw(new \RangeException("brewery phone must be less than 12 characters"));
+		}
+
+		// Take new brewery phone and store it
+		$this->breweryPhone = $newBreweryPhone;
+	}
+
 }
