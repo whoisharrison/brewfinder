@@ -516,6 +516,20 @@ class Profile implements \JsonSerializable {
 	 * @throws \PDOException when mySQL related errors occur
 	 * @throws \TypeError if $pdo is not a PDO connection object
 	 **/
+	public function delete(\PDO $pdo): void {
+		// enforce that the profileId is not null (i.e., don't delete a profile that hasn't been inserted)
+		if($this->profileId === null) {
+			throw(new \PDOException("unable to delete a profile that doesn't exist"));
+		}
+
+		// create query template
+		$query = "DELETE FROM profile WHERE profileId = :profileId";
+		$statement = $pdo->prepare($query);
+
+		// bind the member variables to the place holder in the template
+		$parameters = ["profileId" => $this->profileId];
+		$statement->execute($parameters);
+	}
 
 	/**
 	 * Updates this profile in mySQL
@@ -524,6 +538,20 @@ class Profile implements \JsonSerializable {
 	 * @throws \PDOException when mySQL related errors occur
 	 * @throws \TypeError if $pdo is not a PDO connection object
 	 **/
+	public function update(\PDO $pdo): void {
+		// enforce the profileId is not null (i.e., don't update a profile that hasn't been inserted)
+		if($this->profileId === null) {
+			throw(new \PDOException("unable to update a profile that does not exist"));
+		}
+
+		// create query template
+		$query = "UPDATE profile SET profileImageId = :profileImageId, profileActivationToken = :profileActivationToken, profileAtHandle = :profileAtHandle , profileContent = :profileContent, profileEmail = :profileEmail, profileHash = :profileHash, profileLocationX = :profileLocationX, profileLocationY = :profileLocationY, profileName = :profileName, profileSalt = :profileSalt";
+		$statement = $pdo->prepare($query);
+
+		// bind the member variables to the place holders in the template
+		$parameters = ["profileImageId" => $this->profileImageId, "profileActivationToken" => $this->profileActivationToken, "profileAtHandle" => $this->profileAtHandle, "profileContent" => $this->profileContent, "profileEmail" => $this->profileEmail, "profileHash" => $this->profileHash, "profileLocationX" => $this->profileLocationX, "profileLocationY" => $this->profileLocationY, "profileName" => $this->profileName, "profileSalt" => $this->profileSalt];
+		$statement->execute($parameters);
+	}
 
 	/**
 	 * Gets the Profile by profile id
@@ -534,6 +562,36 @@ class Profile implements \JsonSerializable {
 	 * @throws \PDOException when mySQL related errors occur
 	 * @throws \TypeError when variables are not the correct data type
 	 **/
+	public static function getProfileByProfileId(\PDO $pdo, int $profileId): ?Profile {
+		// sanitize the profile id before searching
+		if($profileId <= 0) {
+			throw(new \PDOException("profile id is not positive"));
+		}
+
+		// create query template
+		$query = "SELECT profileId, profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt FROM profile WHERE profileId = :profileId";
+		$statement = $pdo->prepare($query);
+
+		// bind the profile id to the place holder in the template
+		$parameters = ["profileId" => $profileId];
+		$statement->execute($parameters);
+
+		// grab the profile from mySQL
+		try {
+			$profile = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$profile = new Profile($row["profileId"], $row["profileImageId"], $row["profileActivationToken"],$row["profileAtHandle"], $row["profileContent"], $row["profileEmail"], $row["profileHash"], $row["profileLocationX"], $row["profileLocationY"], $row["profileName"], $row["profileSalt"]);
+			}
+		} catch(\Exception $exception) {
+			// if the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($profile);
+	}
+
+	/**  INSERT INTO profile(profileImageId, profileActivationToken, profileAtHandle, profileContent, profileEmail, profileHash, profileLocationX, profileLocationY, profileName, profileSalt) VALUES(:profileImageId, :profileActivationToken, :profileAtHandle, :profileContent, :profileEmail, :profileHash, :profileLocationX, :profileLocationY, :profileName, :profileSalt)" **/
 
 	/**
 	 * Gets the profile by profile activation token
