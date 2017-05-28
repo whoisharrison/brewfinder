@@ -174,7 +174,7 @@ class Brewery implements \JsonSerializable {
 	 * Mutator method for brewery profile id.
 	 *
 	 * @param int $newBreweryProfileId
-	 * @throws \RangeException is $newBreweryProfiled is not positive
+	 * @throws \RangeException is $newBreweryProfileId is not positive
 	 * @throws \TypeError if $newBreweryProfileId is not an integer
 	 **/
 	public function setBreweryProfileId(int $newBreweryProfileId): void {
@@ -192,6 +192,7 @@ class Brewery implements \JsonSerializable {
 
 		// Convert and store the brewery id.
 		$this->breweryProfileId = $newBreweryProfileId;
+	}
 
 		/**
 		 * Accessor method for address 1
@@ -627,23 +628,53 @@ class Brewery implements \JsonSerializable {
 	 */
 	public function setBreweryState(string $newBreweryState): void {
 
-		// Enforce that the state is properly formatted.
-		$newBreweryState = trim($newBreweryState);
-		$newBreweryState = strtolower($newBreweryState);
+	// Enforce that the state is properly formatted.
+	$newBreweryState = trim($newBreweryState);
+	$newBreweryState = strtolower($newBreweryState);
 
-		// Enforce that the state is a string representation of a hexadecimal.
-		if(!ctype_xdigit($newBreweryState)) {
-			throw(new \InvalidArgumentException("brewery state is empty or insecure"));
-		}
-
-		// Enforce that the state is exactly 2 characters.
-		if(strlen($newBreweryState) !== 2) {
-			throw(new \RangeException("brewery state must be 2 characters"));
-		}
-
-		// Store the state.
-		$this->breweryState = $newBreweryState;
+	// Enforce that the state is a string representation of a hexadecimal.
+	if(!ctype_xdigit($newBreweryState)) {
+		throw(new \InvalidArgumentException("brewery state is empty or insecure"));
 	}
 
+	// Enforce that the state is exactly 2 characters.
+	if(strlen($newBreweryState) !== 2) {
+		throw(new \RangeException("brewery state must be 2 characters"));
+	}
+
+	// Store the state.
+	$this->breweryState = $newBreweryState;
+}
+
+/**
+ * Accessor method for brewery zip.
+ *
+ * @return int value of brewery zip
+ **/
+public function getBreweryZip(): int {
+}
+
+/**
+ * Mutator method for brewery zip.
+ *
+ * @param int $newBreweryZip
+ * @throws \RangeException is $newBreweryZipis not positive
+ * @throws \TypeError if $newBreweryZip is not an integer
+ **/
+public function setBreweryZip(int $newBreweryZip): void {
+
+	// If brewery zip is null, immediately return it.
+	if($newBreweryZip === null) {
+		$this->breweryZip = null;
+		return;
+	}
+
+	// Verify the brewery zip is positive.
+	if($newBreweryZip <= 0) {
+		throw(new \RangeException("brewery zip is not positive"));
+	}
+
+	// Convert and store the brewery zip.
+	$this->breweryZip = $newBreweryZip;
 
 }
