@@ -1,5 +1,5 @@
 <?php
-namespace com/michaelharrisonwebdev;
+//namespace com/michaelharrisonwebdev;
 require_once("autoload.php");
 /**
  * Brewery Class for Brewfinder
@@ -203,7 +203,6 @@ class Brewery implements \JsonSerializable {
 		function getBreweryAddress1(): string {
 			return ($this->breweryAddress1);
 		}
-	}
 
 		/**
 		 * Mutator method for address 1
@@ -676,5 +675,35 @@ public function setBreweryZip(int $newBreweryZip): void {
 
 	// Convert and store the brewery zip.
 	$this->breweryZip = $newBreweryZip;
+}
 
+	/**
+	 * Inserts this brewery into mySQL.
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError is $pdo is not a PDO connection object
+	 **/
+	public function insert(\PDO $pdo): void {
+
+		// Enforce the breweryId is null (i.e., don't insert a brewery that already exists).
+		if($this->breweryId !== null) {
+			throw(new \PDOException("brewery id already exists"));
+		}
+
+		// Create query template.
+		$query = "INSERT INTO profile(breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip) VALUES(:breweryId, :breweryAddress1, :breweryAddress2, :breweryCity, :breweryContent, :breweryEmail, :breweryHash, :breweryImageId, :breweryLocationX, :breweryLocationY, :breweryName, :breweryPhone, :brewerySalt, :breweryState)";
+		$statement = $pdo->prepare($query);
+
+		// Bind the member variables to the place holders in the template.
+		$parameters = ["breweryAddress1" => $this->breweryAddress1, "breweryCity" => $this->breweryCity, "breweryContent" => $this->breweryContent, "breweryEmail" => $this->breweryEmail, "breweryHash" => $this->breweryHash, "breweryImageId" => $this->breweryImageId, "breweryLocationX" => $this->breweryLocationX, "breweryLocationY" => $this->breweryLocationY, "breweryName" => $this->breweryName, "breweryPhone" => $this->breweryPhone, "brewerySalt" => $this->brewerySalt, "breweryState" => $this->breweryState, "breweryZip" => $this->breweryZip];
+		$statement->execute($parameters);
+
+		// Update the null breweryId with what mySQL just gave us.
+		$this->breweryId = intval($pdo->lastInsertId());
+	}
+
+
+	public function jsonSerialize() {
+		return (get_object_vars($this));
 }
