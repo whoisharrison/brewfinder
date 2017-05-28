@@ -896,6 +896,39 @@ public function setBreweryZip(int $newBreweryZip): void {
 		return ($breweries);
 	}
 
+	public static function getBreweryByBreweryState(\PDO $pdo, string $breweryState) : \SplFixedArray {
+
+		// Sanitize state
+		$breweryState = trim($breweryState);
+		$breweryState = filter_var($breweryState, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if(empty($breweryState) === true) {
+			throw(new \PDOException("not a valid state"));
+		}
+
+		// Query for brewery using breweryState
+		$query = "SELECT breweryId, breweryProfileId, breweryAddress1, breweryAddress2, breweryCity, breweryContent, breweryEmail, breweryHash, breweryImageId, breweryLocationX, breweryLocationY, breweryName, breweryPhone, brewerySalt, breweryState, breweryZip FROM brewery WHERE breweryState LIKE :breweryState";
+		$statement = $pdo->prepare($query);
+
+		// Bind the brewery state to the placeholder
+		$breweryState = "%$breweryState%";
+		$parameters = ["breweryState" => $breweryState];
+		$statement->execute($parameters);
+
+		// Build array
+		$breweries = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while (($row = $statement->fetch()) !== false) {
+			try {
+				$brewery = new Brewery($row["breweryId"], $row["breweryProfileId"], $row["breweryAddress1"], $row["breweryAddress2"], $row["breweryCity"], $row["breweryContent"], $row["breweryEmail"], $row["breweryHash"], $row["breweryImageId"], $row["breweryLocationX"], $row["breweryLocationY"], $row["breweryName"], $row["breweryPhone"], $row["brewerySalt"], $row["breweryState"], $row["breweryZip"]);
+				[$breweries->key()] = $brewery;
+				$breweries->next();
+			} catch (\Exception $exception) {
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($breweries);
+	}
+
 		public function jsonSerialize() {
 		return (get_object_vars($this));
 }
