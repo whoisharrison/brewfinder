@@ -1,5 +1,5 @@
 <?php
-namespace com/michaelharrisonwebdev;
+//namespace to come
 /**
  *  Trait to Validate mySQL Date/
  *
@@ -104,4 +104,4 @@ trait ValidateDate {
 		// if we got here, the date is clean
 		return($newTime);
 	}
-}*/
+}
