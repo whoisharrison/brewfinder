@@ -130,7 +130,7 @@ class BreweryImage implements \JsonSerializable {
 		}
 
 		// Create query template
-		$query = "DELETE breweryImage FROM breweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
+		$query = "DELETE FROM breweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
 		$statement = $pdo->prepare($query);
 
 		// Bind the member variables to the place holders in the template
@@ -169,7 +169,7 @@ class BreweryImage implements \JsonSerializable {
 		}
 
 		// Create query template
-		$query = "SELECT BreweryImage FROM BreweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
+		$query = "SELECT BreweryImageImageId FROM BreweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
 		$statement = $pdo->prepare($query);
 
 		// Bind the brewery image image id to the place holder in the template
@@ -209,7 +209,7 @@ class BreweryImage implements \JsonSerializable {
 		}
 
 		// Create query template
-		$query = "SELECT BreweryImage FROM BreweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
+		$query = "SELECT BreweryImageBreweryId FROM BreweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
 		$statement = $pdo->prepare($query);
 
 		// Bind the brewery image brewery id to the place holder in the template
@@ -223,6 +223,40 @@ class BreweryImage implements \JsonSerializable {
 			$row = $statement->fetch();
 			if($row !== false) {
 				$breweryImage = new BreweryImage($row["breweryImageImageId"], $row["breweryImageBreweryId"]);
+			}
+		} catch(\Exception $exception) {
+
+			// If the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($breweryImage);
+	}
+
+	public static function getBreweryImageByBreweryImageImageIdAndBreweryImageBreweryId(\PDO $pdo, int $breweryImageImageId, int $breweryImageBreweryId): ?BreweryImage {
+
+		// Sanitize before searching
+		if($breweryImageImageId <= 0) {
+			throw(new \PDOException("brewery image image id is not positive"));
+		}
+		if($breweryImageBreweryId <= 0) {
+			throw(new \PDOException("brewery image brewery id is not positive"));
+		}
+
+		// Create query template
+		$query = "SELECT BreweryImageImageId, BreweryImageBreweryId FROM BreweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
+		$statement = $pdo->prepare($query);
+
+		// Bind the member variables to the place holders in the template
+		$parameters = ["breweryImageImageId" => $breweryImageImageId, "breweryImageBreweryId" => $breweryImageBreweryId];
+		$statement->execute($parameters);
+
+		// Grab the brewery image from mySQL
+		try {
+			$breweryImage = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$friend = new BreweryImage($row["breweryImageImageId"], $row["breweryImageBreweryId"]);
 			}
 		} catch(\Exception $exception) {
 
