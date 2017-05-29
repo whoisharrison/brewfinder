@@ -266,6 +266,30 @@ class BreweryImage implements \JsonSerializable {
 		return ($breweryImage);
 	}
 
+	public static function getAllBreweryImages(\PDO $pdo): \SplFixedArray {
+
+		// Create query template
+		$query = "SELECT breweryImageImageId, breweryImageBreweryId FROM breweryImage";
+		$statement = $pdo->prepare($query);
+		$statement->execute();
+
+		// Build an array of Brewery Images
+		$breweryImages = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while(($row = $statement->fetch()) !== false) {
+			try {
+				$breweryImage = new BreweryImage($row["breweryImageImageId"], $row["breweryImageBreweryId"]);
+				$breweryImages[$breweryImages->key()] = $breweryImage;
+				$breweryImages->next();
+			} catch(\Exception $exception) {
+
+				// If the row couldn't be converted, rethrow it
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($breweryImages);
+	}
+
 		/**
 		 * formats the state variables for JSON serialization
 		 *
