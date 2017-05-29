@@ -176,7 +176,47 @@ class BreweryImage implements \JsonSerializable {
 		$parameters = ["breweryImageImageId" => $breweryImageImageId];
 		$statement->execute($parameters);
 
-		// Grab the Brewery image from mySQL
+		// Grab the brewery image from mySQL
+		try {
+			$breweryImage = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$breweryImage = new BreweryImage($row["breweryImageImageId"], $row["breweryImageBreweryId"]);
+			}
+		} catch(\Exception $exception) {
+
+			// If the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($breweryImage);
+	}
+
+	/**
+	 * Gets the Brewery Image by brewery image brewery id
+	 *
+	 * @param \PDO $pdo $pdo PDO connection object
+	 * @param int $profileId profile id to search for
+	 * @return BreweryImage|null BreweryImage or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when variables are not the correct data type
+	 **/
+	public static function getBreweryImageByBreweryImageBreweryId(\PDO $pdo, int $breweryImageBreweryId):?BreweryImage {
+
+		// Sanitize the brewery image brewery id before searching
+		if($breweryImageBreweryId <= 0) {
+			throw(new \PDOException("brewery image brewery id is not positive"));
+		}
+
+		// Create query template
+		$query = "SELECT BreweryImage FROM BreweryImage WHERE breweryImageImageId = :breweryImageImageId AND breweryImageBreweryId = :breweryImageBreweryId";
+		$statement = $pdo->prepare($query);
+
+		// Bind the brewery image brewery id to the place holder in the template
+		$parameters = ["breweryImageBreweryId" => $breweryImageBreweryId];
+		$statement->execute($parameters);
+
+		// Grab the brewery image from mySQL
 		try {
 			$breweryImage = null;
 			$statement->setFetchMode(\PDO::FETCH_ASSOC);
