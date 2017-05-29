@@ -22,23 +22,35 @@ class BreweryTest extends BrewfinderTest {
 	protected $VALID_ACTIVATION;
 
 	/**
-	 * Valid at handle to use
-	 * @var string $VALID_ATHANDLE
+	 * Valid address
+	 * @var string $VALID_ADDRESS1
 	 **/
-	protected $VALID_ATHANDLE = "@barkparkz";
+	protected $VALID_ADDRESS1;
 
 	/**
-	 * Valid cloudinary id to use
-	 * @var string $VALID_CLOUDINARYID
+	 * Valid address
+	 * @var string $VALID_ADDRESS2
 	 **/
 
-	protected $VALID_CLOUDINARYID;
+	protected $VALID_ADDRESS2;
+
+	/**
+	 * Valid city
+	 * @var string $VALID_CITY
+	 **/
+	protected $VALID_CITY;
+
+	/**
+	 * Valid content
+	 * @var string $VALID_CONTENT
+	 **/
+	protected $VALID_CONTENT;
 
 	/**
 	 * Valid email to use
 	 * @var string $VALID_EMAIL
 	 **/
-	protected $VALID_EMAIL = "lea@barkparkz.com";
+	protected $VALID_EMAIL = "lea@brewfinder.com";
 
 	/**
 	 * Valid hash to use.
@@ -47,10 +59,10 @@ class BreweryTest extends BrewfinderTest {
 	protected $VALID_HASH;
 
 	/**
-	 * Valid salt to use to create the profile object to own the test.
-	 * @var string $VALID_SALT;
+	 * Valid image id
+	 * @var int|null $VALID_IMAGEID
 	 **/
-	protected $VALID_SALT;
+	protected $VALID_IMAGEID;
 
 	/**
 	 * Valid location x to use.
@@ -63,3 +75,33 @@ class BreweryTest extends BrewfinderTest {
 	 * @var float $VALID_LOCATIONY
 	 **/
 	protected $VALID_LOCATIONY = 83.8889;
+
+	/**
+	 * Valid name
+	 * @var string $VALID_NAME
+	 **/
+	protected $VALID_NAME;
+
+	/**
+	 * Valid phone
+	 * @var string $VALID_PHONE
+	 **/
+	protected $VALID_PHONE;
+
+	/**
+	 * Valid salt to use to create the profile object to own the test.
+	 * @var string $VALID_SALT;
+	 **/
+	protected $VALID_SALT;
+
+	/**
+	 * Valid state
+	 * @var string $VALID_STATE;
+	 **/
+	protected $VALID_STATE;
+
+	/**
+	 * Valid zip
+	 * @var int $VALID_ZIP
+	 **/
+	protected $VALID_ZIP;
