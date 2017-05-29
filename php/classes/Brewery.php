@@ -89,6 +89,7 @@ class Brewery implements \JsonSerializable {
 	 *
 	 * @param int $newBreweryId
 	 * @param int|null $newBreweryProfileId
+	 * @param string $newBreweryActivationToken
 	 * @param string $newBreweryAddress1
 	 * @param string|null $newBreweryAddress2
 	 * @param string $newBreweryCity
@@ -104,10 +105,11 @@ class Brewery implements \JsonSerializable {
 	 * @param string $newBreweryState
 	 * @param int $newBreweryZip
 	 **/
-	public function __construct(int $newBreweryId, ?int $newBreweryProfileId, string $newBreweryAddress1, ?string $newBreweryAddress2, string $newBreweryCity, string $newBreweryContent, string $newBreweryEmail, string $newBreweryHash, int $newBreweryImageId,  float $newBreweryLocationX, float $newBreweryLocationY, string $newBreweryName, string $newBreweryPhone, string $newBrewerySalt, string $newBreweryState, int $newBreweryZip) {
+	public function __construct(int $newBreweryId, ?int $newBreweryProfileId, string $newBreweryActivationToken, string $newBreweryAddress1, ?string $newBreweryAddress2, string $newBreweryCity, string $newBreweryContent, string $newBreweryEmail, string $newBreweryHash, int $newBreweryImageId,  float $newBreweryLocationX, float $newBreweryLocationY, string $newBreweryName, string $newBreweryPhone, string $newBrewerySalt, string $newBreweryState, int $newBreweryZip) {
 		try {
 			$this->setBreweryId($newBreweryId);
 			$this->setBreweryProfileId($newBreweryProfileId);
+			$this->setBreweryActivationToken($newBreweryActivationToken);
 			$this->setBreweryAddress1($newBreweryAddress1);
 			$this->setBreweryAddress2($newBreweryAddress2);
 			$this->setBreweryCity($newBreweryCity);
@@ -192,6 +194,34 @@ class Brewery implements \JsonSerializable {
 
 		// Convert and store the brewery id.
 		$this->breweryProfileId = $newBreweryProfileId;
+	}
+
+	/**
+	 * Accessor method for account activation token.
+	 *
+	 * @return string value of the activation token
+	 **/
+	public function getBreweryActivationToken(): ?string {
+		return $this->breweryActivationToken;
+	}
+	/**
+	 * Mutator method for brewery activation token.
+	 *
+	 * @param string $newBreweryActivationToken
+	 * @throws \InvalidArgumentException if the token is not a string or insecure
+	 * @throws \RangeException if the token is not exactly 32 characters
+	 * @throws \TypeError if the activation token is not a string
+	 **/
+	public function setBreweryActivationToken(?string $newBreweryActivationToken) : void {
+		if($newBreweryActivationToken === null) {
+			$this->breweryActivationToken = null;
+			return;
+		}
+		$newBreweryActivationToken = strtolower(trim($newBreweryActivationToken));
+		if(ctype_xdigit($newBreweryActivationToken) === false) {
+			throw(new\RangeException("user activation is not valid"));
+		}
+		$this->breweryActivationToken = $newBreweryActivationToken;
 	}
 
 		/**
