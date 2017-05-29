@@ -72,11 +72,11 @@ class Brewery implements \JsonSerializable {
 	 */
 	private $breweryPhone;
 	/**
-	 * @var $brewerySalt
+	 * @var string $brewerySalt
 	 */
 	private $brewerySalt;
 	/**
-	 * @var
+	 * @var string $breweryState
 	 */
 	private $breweryState;
 	/**
